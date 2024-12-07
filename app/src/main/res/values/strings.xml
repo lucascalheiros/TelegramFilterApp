@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">TelegramFilterApp</string>
+    <string name="confirm">Confirm</string>
+    <string name="phone_number">Phone number</string>
+    <string name="title">Title</string>
+    <string name="regex">Regex</string>
+    <string name="regex_field_supporting_text">Only the messages matching the regex will be alerted and listed to you</string>
+    <string name="filter_message_source">Filter message source</string>
+    <string name="save">Save</string>
+    <string name="all_channels">All channels</string>
+    <string name="all_groups">All groups</string>
+    <string name="all_chats_non_secret">All chats (non-secret)</string>
+    <string name="all_secret_chats">All secret chats</string>
+    <string name="filter_settings">Filter Settings</string>
+    <string name="back">Back</string>
+    <string name="remove">Remove</string>
+    <string name="add_message_source">Add message source</string>
+    <string name="add_filter">Add filter</string>
+    <string name="alert_filter_settings">Alert Filter Settings</string>
+    <string name="hide_password">Hide password</string>
+    <string name="show_password">Show password</string>
+    <string name="account_s_password">Account\'s password:</string>
+    <string name="login_confirmation_code">Login confirmation code:</string>
+    <string name="password">Password</string>
+    <string name="edit">Edit</string>
+    <string name="query_supporting_text">Query: %1$s</string>
+    <string name="messages">Messages</string>
+    <string name="query">Query</string>
+    <string name="telegram_account_setup">Telegram account setup</string>
+    <string name="remove_query">remove query</string>
+    <string name="cancel">Cancel</string>
+    <string name="add_query_text">Add query text</string>
+    <string name="only_channels">Only channels</string>
+</resources>
