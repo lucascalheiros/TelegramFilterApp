@@ -31,4 +31,5 @@
     <string name="cancel">Cancel</string>
     <string name="add_query_text">Add query text</string>
     <string name="only_channels">Only channels</string>
+    <string name="delete">Delete</string>
 </resources>

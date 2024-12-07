@@ -1,6 +1,7 @@
 package com.github.lucascalheiros.telegramfilterapp.ui.filterlist
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -33,13 +34,14 @@ fun FilterListScreen(
         viewModel.dispatch(FilterListIntent.LoadData)
     }
     val state = viewModel.state.collectAsState()
-    FilterChatsScreenContent(state.value, onNav)
+    FilterChatsScreenContent(state.value, viewModel::dispatch, onNav)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FilterChatsScreenContent(
     state: FilterListUiState,
+    dispatch: (FilterListIntent) -> Unit,
     onNav: (NavRoute) -> Unit = {}
 ) {
     Scaffold(
@@ -60,7 +62,9 @@ fun FilterChatsScreenContent(
         }
     ) { innerPadding ->
         LazyColumn(
-            Modifier.padding(innerPadding).fillMaxSize()
+            Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
         ) {
             itemsIndexed(state.filters, { _, info -> info.id }) { index, info ->
                 ListItem(
@@ -74,10 +78,23 @@ fun FilterChatsScreenContent(
                         Text(stringResource(R.string.query_supporting_text, info.queries.joinToString(", ")))
                     },
                     trailingContent = {
-                        IconButton({
-                            onNav(NavRoute.FilterSettings(info.id))
-                        }) {
-                            Icon(painterResource(R.drawable.ic_edit), stringResource(R.string.edit))
+                        Row {
+                            IconButton({
+                                onNav(NavRoute.FilterSettings(info.id))
+                            }) {
+                                Icon(
+                                    painterResource(R.drawable.ic_edit),
+                                    stringResource(R.string.edit)
+                                )
+                            }
+                            IconButton({
+                                dispatch(FilterListIntent.DeleteFilter(info.id))
+                            }) {
+                                Icon(
+                                    painterResource(R.drawable.ic_delete),
+                                    stringResource(R.string.delete)
+                                )
+                            }
                         }
                     }
                 )

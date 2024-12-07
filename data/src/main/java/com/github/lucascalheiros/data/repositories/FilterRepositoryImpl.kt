@@ -27,4 +27,8 @@ class FilterRepositoryImpl @Inject constructor(
         )
     }
 
+    override suspend fun deleteFilter(id: Long) {
+        filterLocalDataSource.deleteFilter(id)
+    }
+
 }

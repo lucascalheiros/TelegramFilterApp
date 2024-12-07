@@ -26,4 +26,7 @@ class FilterLocalDataSource @Inject constructor(
         queries: List<String>
     ) = dao.save(filterDb, chatIds, queries)
 
+    suspend fun deleteFilter(id: Long) {
+        dao.deleteFilter(id)
+    }
 }

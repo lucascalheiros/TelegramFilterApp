@@ -6,4 +6,5 @@ interface FilterRepository {
     suspend fun getFilters(): List<Filter>
     suspend fun getFilter(id: Long): Filter?
     suspend fun saveFilter(filter: Filter)
+    suspend fun deleteFilter(id: Long)
 }

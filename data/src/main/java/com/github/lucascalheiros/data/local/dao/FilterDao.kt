@@ -34,6 +34,9 @@ interface FilterDao {
     @Query("delete from FilterToQueriesCrossRefDb where filterId = :id")
     suspend fun clearQueries(id: Long)
 
+    @Query("delete from FilterDb where id = :id")
+    suspend fun clearFilter(id: Long)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveChats(data: List<ChatToFilterInfoCrossRefDb>)
 
@@ -54,6 +57,13 @@ interface FilterDao {
         clearQueries(id)
         saveChats(chatIds.map { ChatToFilterInfoCrossRefDb(it, id) })
         saveQueries(queries.map { FilterToQueriesCrossRefDb(id, it) })
+    }
+
+    @Transaction
+    suspend fun deleteFilter(id: Long) {
+        clearFilter(id)
+        clearQueries(id)
+        clearChatIds(id)
     }
 
 }
