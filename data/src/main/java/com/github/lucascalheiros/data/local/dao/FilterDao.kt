@@ -8,25 +8,16 @@ import androidx.room.Transaction
 import com.github.lucascalheiros.data.model.ChatToFilterInfoCrossRefDb
 import com.github.lucascalheiros.data.model.FilterDb
 import com.github.lucascalheiros.data.model.FilterToQueriesCrossRefDb
+import com.github.lucascalheiros.data.model.FilterWithQueriesAndChats
 
 @Dao
 interface FilterDao {
 
-    @Query("""
-        select * from FilterDb 
-        left join FilterToQueriesCrossRefDb on id = filterId
-    """)
-    suspend fun getFilters(): Map<FilterDb, List<FilterToQueriesCrossRefDb>>
+    @Query("select * from FilterDb")
+    suspend fun getFilters(): List<FilterWithQueriesAndChats>
 
-    @Query("""
-        select * from FilterDb 
-        left join FilterToQueriesCrossRefDb on id = filterId
-        where id = :id
-    """)
-    suspend fun getFilter(id: Long): Map<FilterDb, List<FilterToQueriesCrossRefDb>>
-
-    @Query("select chatId from ChatToFilterInfoCrossRefDb where filterId = :id")
-    suspend fun getChatIds(id: Long): List<Long>
+    @Query("select * from FilterDb where id = :id")
+    suspend fun getFilter(id: Long): FilterWithQueriesAndChats?
 
     @Query("delete from ChatToFilterInfoCrossRefDb where filterId = :id")
     suspend fun clearChatIds(id: Long)

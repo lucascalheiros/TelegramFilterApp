@@ -32,4 +32,7 @@
     <string name="add_query_text">Add query text</string>
     <string name="only_channels">Only channels</string>
     <string name="delete">Delete</string>
+    <string name="selected_chats">Selected channels/chats</string>
+    <string name="selected_channels_chats">Selected channels/chats</string>
+    <string name="select_chats">Select chats</string>
 </resources>

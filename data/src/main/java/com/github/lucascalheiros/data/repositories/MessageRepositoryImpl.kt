@@ -13,9 +13,7 @@ class MessageRepositoryImpl @Inject constructor(
 ): MessageRepository {
 
     override suspend fun searchMessages(filter: Filter): List<Message> {
-        return filter.queries.map {
-            searchMessagesWithQuery(it, filter, "")
-        }.flatten()
+        return searchMessagesWithQuery(filter.queries.joinToString(" "), filter, "")
     }
 
     private suspend fun searchMessagesWithQuery(query: String, filter: Filter, offset: String = ""): List<Message> {
@@ -30,7 +28,7 @@ class MessageRepositoryImpl @Inject constructor(
             0
         ))
 
-        val updateAtInSeconds = filter.updateAt / 1000L
+        val updateAtInSeconds = filter.dateLimit / 1000L
 
         val messages = foundMessages.messages.mapNotNull {
             if (it.date < updateAtInSeconds) {

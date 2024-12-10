@@ -61,7 +61,7 @@ class FilterSettingsViewModel @Inject constructor(
                 save()
                 FilterSettingsAction.Close
             }
-            FilterSettingsIntent.ToggleAllChannels -> FilterSettingsAction.ToggleAllChannels
+            is FilterSettingsIntent.SetAllChannelsState -> FilterSettingsAction.SetAllChannelsState(intent.state)
             is FilterSettingsIntent.UpdateTitle -> FilterSettingsAction.UpdateTitle(intent.value)
             is FilterSettingsIntent.AddQuery -> FilterSettingsAction.AddQuery(intent.text)
             FilterSettingsIntent.ShowAddQuery -> FilterSettingsAction.ShowAddQuery
@@ -69,6 +69,8 @@ class FilterSettingsViewModel @Inject constructor(
             is FilterSettingsIntent.RemoveQuery -> FilterSettingsAction.RemoveQuery(intent.index)
             FilterSettingsIntent.DismissSelectChat -> FilterSettingsAction.DismissSelectChat
             FilterSettingsIntent.ShowSelectChat -> FilterSettingsAction.ShowSelectChat
+            is FilterSettingsIntent.SetSelectedChats -> FilterSettingsAction.SetSelectedChats(intent.chatIds)
+            is FilterSettingsIntent.RemoveChat -> FilterSettingsAction.RemoveChat(intent.chatId)
         }
     }
 
@@ -90,9 +92,9 @@ class FilterSettingsViewModel @Inject constructor(
                 id = filterId,
                 title = state.filterTitle,
                 queries = state.queries,
-                onlyChannels = state.allChannels,
-                selectedChats = state.selectedChats,
-                updateAt = System.currentTimeMillis()
+                onlyChannels = state.onlyChannels,
+                chatIds = state.selectedChats.map { it.id },
+                dateLimit = System.currentTimeMillis()
             )
         )
     }

@@ -5,9 +5,9 @@ import com.github.lucascalheiros.domain.model.ChatInfo
 data class FilterSettingsUiState(
     val filterTitle: String = "",
     val queries: List<String> = listOf(),
-    val allChannels: Boolean = true,
+    val onlyChannels: Boolean = true,
     val availableChats: List<ChatInfo> = listOf(),
-    val selectedChats: List<ChatInfo> = listOf(),
+    val selectedChatIds: List<Long> = listOf(),
     val close: Boolean = false,
     val showAddQueryDialog: Boolean = false,
     val showSaveDisabledHint: Boolean = false,
@@ -15,6 +15,11 @@ data class FilterSettingsUiState(
 ) {
     val isSaveEnabled: Boolean
         get() {
-            return queries.isNotEmpty() && (allChannels || selectedChats.isNotEmpty())
+            return queries.isNotEmpty() && (onlyChannels || selectedChats.isNotEmpty())
         }
+
+    val selectedChats: List<ChatInfo> by lazy {
+        availableChats.filter { it.id in selectedChatIds }
+    }
+
 }

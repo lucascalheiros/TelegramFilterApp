@@ -13,28 +13,64 @@ class FilterSettingsReducer @Inject constructor() :
         state: FilterSettingsUiState, action: FilterSettingsAction
     ): FilterSettingsUiState {
         return when (action) {
-            ToggleAllChannels -> state.copy(allChannels = true)
+            is SetAllChannelsState -> state.copy(
+                onlyChannels = action.state
+            )
 
-            is UpdateTitle -> state.copy(filterTitle = action.title)
+            is UpdateTitle -> state.copy(
+                filterTitle = action.title
+            )
+
             is SetFilter -> state.copy(
                 filterTitle = action.filter.title,
                 queries = action.filter.queries,
+                onlyChannels = action.filter.onlyChannels,
+                selectedChatIds = action.filter.chatIds
             )
 
             Close -> state.copy(close = true)
-            is AddQuery -> state.copy(queries = state.queries.toMutableList().apply {
-                add(action.text)
-            }, showAddQueryDialog = false)
 
-            ShowAddQuery -> state.copy(showAddQueryDialog = true)
-            DismissAddQuery -> state.copy(showAddQueryDialog = false)
-            is RemoveQuery -> state.copy(queries = state.queries.toMutableList().apply {
-                removeAt(action.index)
-            })
+            is AddQuery -> state.copy(
+                queries = state.queries.toMutableList().apply {
+                    add(action.text)
+                },
+                showAddQueryDialog = false
+            )
 
-            DismissSelectChat -> state.copy(showSelectChatDialog = false)
-            ShowSelectChat -> state.copy(showSelectChatDialog = true)
-            is UpdateAvailableChats -> state.copy(availableChats = action.chats)
+            ShowAddQuery -> state.copy(
+                showAddQueryDialog = true
+            )
+
+            DismissAddQuery -> state.copy(
+                showAddQueryDialog = false
+            )
+
+            is RemoveQuery -> state.copy(
+                queries = state.queries.toMutableList().apply {
+                    removeAt(action.index)
+                }
+            )
+
+            DismissSelectChat -> state.copy(
+                showSelectChatDialog = false
+            )
+
+            ShowSelectChat -> state.copy(
+                showSelectChatDialog = true
+            )
+
+            is UpdateAvailableChats -> state.copy(
+                availableChats = action.chats
+            )
+
+            is SetSelectedChats -> state.copy(
+                selectedChatIds = action.chatIds,
+                showSelectChatDialog = false
+            )
+
+            is RemoveChat -> state.copy(
+                selectedChatIds = state.selectedChatIds.filter { it != action.chatId }
+            )
         }
     }
 

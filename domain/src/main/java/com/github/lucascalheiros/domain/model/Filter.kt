@@ -8,6 +8,6 @@ data class Filter(
     val title: String,
     val queries: List<String>,
     val onlyChannels: Boolean,
-    val selectedChats: List<ChatInfo> = listOf(),
-    val updateAt: Long
+    val chatIds: List<Long>,
+    val dateLimit: Long
 )

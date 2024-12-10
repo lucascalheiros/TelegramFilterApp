@@ -17,7 +17,6 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,7 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.github.lucascalheiros.domain.model.ChatInfo
@@ -36,9 +34,9 @@ fun SelectChatDialog(
     availableChats: List<ChatInfo>,
     selectedChats: List<ChatInfo>,
     onCancel: () -> Unit,
-    onConfirm: (String) -> Unit
+    onConfirm: (List<Long>) -> Unit
 ) {
-    val selectedChatIds = selectedChats.map { it.id }
+    var selectedChatIds by remember { mutableStateOf(selectedChats.map { it.id }) }
     Dialog(
         onDismissRequest = onCancel
     ) {
@@ -56,23 +54,32 @@ fun SelectChatDialog(
                     horizontalArrangement = Arrangement.Start,
                 ) {
                     Text(
-                        stringResource(R.string.add_query_text),
+                        stringResource(R.string.select_chats),
                         style = MaterialTheme.typography.titleLarge
                     )
                 }
                 Spacer(Modifier.height(16.dp))
                 HorizontalDivider()
                 LazyColumn(Modifier.height(200.dp)) {
-                    items(availableChats, { it.id }) {
-                        var isChecked by remember { mutableStateOf(it.id in selectedChatIds) }
+                    items(availableChats, { it.id }) { chatInfo ->
+                        var isChecked by remember { mutableStateOf(chatInfo.id in selectedChatIds) }
                         ListItem(
                             headlineContent = {
-                                Text(it.title)
+                                Text(chatInfo.title)
                             }, leadingContent = {
                                 Checkbox(
                                     checked = isChecked,
                                     onCheckedChange = {
                                         isChecked = it
+                                        selectedChatIds = if (it) {
+                                            selectedChatIds.toMutableList().apply {
+                                                add(chatInfo.id)
+                                            }
+                                        } else {
+                                            selectedChatIds.toMutableList().apply {
+                                                remove(chatInfo.id)
+                                            }
+                                        }
                                     }
                                 )
                             }
@@ -94,7 +101,7 @@ fun SelectChatDialog(
                         Text(stringResource(R.string.cancel))
                     }
                     TextButton(
-                        onClick = { }
+                        onClick = { onConfirm(availableChats.mapNotNull { it.id.takeIf { it in selectedChatIds }}) }
                     ) {
                         Text(stringResource(R.string.confirm))
                     }

@@ -11,14 +11,10 @@ class FilterLocalDataSource @Inject constructor(
 ) {
 
     suspend fun getFilters(): List<Filter> = dao.getFilters().map {
-        it.key.toModel(it.value)
+        it.toModel()
     }
 
-    suspend fun getFilter(id: Long): Filter? = dao.getFilter(id).entries.firstOrNull()?.let {
-        it.key.toModel(it.value)
-    }
-
-    suspend fun getChatIds(id: Long): List<Long> = dao.getChatIds(id)
+    suspend fun getFilter(id: Long): Filter? = dao.getFilter(id)?.toModel()
 
     suspend fun save(
         filterDb: FilterDb,

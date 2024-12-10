@@ -22,7 +22,7 @@ class FilterRepositoryImpl @Inject constructor(
     override suspend fun saveFilter(filter: Filter) {
         filterLocalDataSource.save(
             filterDb = filter.toDb(),
-            chatIds = filter.selectedChats.map { it.id },
+            chatIds = filter.chatIds,
             queries = filter.queries
         )
     }
