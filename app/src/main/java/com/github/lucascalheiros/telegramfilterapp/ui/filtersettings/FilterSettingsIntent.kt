@@ -1,7 +1,5 @@
 package com.github.lucascalheiros.telegramfilterapp.ui.filtersettings
 
-import com.github.lucascalheiros.domain.model.ChatInfo
-
 sealed interface FilterSettingsIntent {
     data object LoadData: FilterSettingsIntent
     data class UpdateTitle(val value: String): FilterSettingsIntent
