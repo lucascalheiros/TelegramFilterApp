@@ -1,8 +1,7 @@
 package com.github.lucascalheiros.data.frameworks.telegram
 
 import android.content.Context
-import android.util.Log
-import com.github.lucascalheiros.common.di.MainDispatcher
+import com.github.lucascalheiros.common.di.IoDispatcher
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
@@ -17,11 +16,13 @@ import org.drinkless.tdlib.TdApi
 import org.drinkless.tdlib.TdApi.RegisterDevice
 import javax.inject.Inject
 import javax.inject.Singleton
+import com.github.lucascalheiros.common.log.logDebug
 
 @Singleton
 class TelegramClientWrapper @Inject constructor(
     @ApplicationContext private val context: Context,
-    @MainDispatcher private val dispatcher: CoroutineDispatcher
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    private val notificationHandler: NotificationHandler
 ) {
 
     private var telegramClient: Client? = null
@@ -42,7 +43,7 @@ class TelegramClientWrapper @Inject constructor(
         }
         telegramClient = Client.create(
             { state ->
-                Log.d(TAG, state.toString())
+                logDebug(state.toString())
 
                 when (state) {
                     is TdApi.UpdateAuthorizationState -> handle(state)
@@ -53,10 +54,10 @@ class TelegramClientWrapper @Inject constructor(
                 }
             },
             {
-                Log.e(TAG, "updateExceptionHandler", it)
+                logDebug("updateExceptionHandler", it)
             },
             {
-                Log.e(TAG, "defaultExceptionHandler", it)
+                logDebug("defaultExceptionHandler", it)
             }
         )
     }
@@ -72,11 +73,11 @@ class TelegramClientWrapper @Inject constructor(
         _currentAuthState.value = state
 
         when (state.authorizationState) {
-            is TdApi.AuthorizationStateWaitTdlibParameters -> CoroutineScope(dispatcher).launch {
+            is TdApi.AuthorizationStateWaitTdlibParameters -> CoroutineScope(ioDispatcher).launch {
                 send(setTdlibParameters(context))
             }
 
-            is TdApi.AuthorizationStateReady -> CoroutineScope(dispatcher).launch {
+            is TdApi.AuthorizationStateReady -> CoroutineScope(ioDispatcher).launch {
                 val token = FirebaseMessaging.getInstance().token.await()
                 val deviceTokenFirebaseCloudMessaging = RegisterDevice(
                     TdApi.DeviceTokenFirebaseCloudMessaging(token, false),
@@ -90,14 +91,21 @@ class TelegramClientWrapper @Inject constructor(
 
     private fun handle(state: TdApi.UpdateNewMessage) {
         val messageId = state.message.id
+        val chatId = state.message.chatId
         val message = state.message
         if (message.isOutgoing) {
             return
         }
-        Log.d(TAG, "newMessageReceived $message")
+        logDebug("newMessageReceived $message")
         val title = getChat(message.chatId)?.title ?: ""
         val content = message.content.textContent()
-        sendNotification(context, messageId, title, content)
+        notificationHandler.handleNotification(
+            chatId,
+            messageId,
+            title,
+            content,
+            message.isChannelPost
+        )
     }
 
     private fun handle(state: TdApi.UpdateNewChat) {
@@ -106,9 +114,5 @@ class TelegramClientWrapper @Inject constructor(
                 it[state.chat.id] = state.chat
             }
         }
-    }
-
-    companion object {
-        private val TAG = TelegramClientWrapper::class.simpleName
     }
 }

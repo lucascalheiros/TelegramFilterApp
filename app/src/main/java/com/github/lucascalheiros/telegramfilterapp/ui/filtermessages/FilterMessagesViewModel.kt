@@ -40,12 +40,11 @@ class FilterMessagesViewModel @Inject constructor(
     private suspend fun intentHandleMiddleware(intent: FilterMessagesIntent): FilterMessagesAction? {
         return when (intent) {
             FilterMessagesIntent.LoadData -> {
+                reduceAction(FilterMessagesAction.LoadingMessage)
                 val filter = getFilterUseCase.getFilter(filterId) ?: return null
                 val messages = getMessagesUseCase(filter)
                 FilterMessagesAction.SetMessages(messages)
             }
-
-            else -> null
         }
     }
 

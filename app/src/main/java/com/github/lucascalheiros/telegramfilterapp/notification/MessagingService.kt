@@ -1,6 +1,6 @@
 package com.github.lucascalheiros.telegramfilterapp.notification
 
-import android.util.Log
+import com.github.lucascalheiros.common.log.logDebug
 import com.github.lucascalheiros.data.frameworks.telegram.TelegramClientWrapper
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -17,7 +17,7 @@ class MessagingService : FirebaseMessagingService() {
     lateinit var telegramClientWrapper: TelegramClientWrapper
 
     override fun onNewToken(token: String) {
-        Log.d("MessagingService", "::onNewToken $token")
+        logDebug("::onNewToken $token")
 
         runBlocking {
             telegramClientWrapper.send(
@@ -30,7 +30,7 @@ class MessagingService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
-        Log.d("MessagingService", message.toString())
+        logDebug(message.toString())
         telegramClientWrapper.setup()
     }
 }

@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.github.lucascalheiros.common.datetime.toMillis
 import com.github.lucascalheiros.domain.model.Filter
 import com.github.lucascalheiros.domain.usecases.GetChatsUseCase
 import com.github.lucascalheiros.domain.usecases.GetFilterUseCase
@@ -64,13 +65,10 @@ class FilterSettingsViewModel @Inject constructor(
             is FilterSettingsIntent.SetAllChannelsState -> FilterSettingsAction.SetAllChannelsState(intent.state)
             is FilterSettingsIntent.UpdateTitle -> FilterSettingsAction.UpdateTitle(intent.value)
             is FilterSettingsIntent.AddQuery -> FilterSettingsAction.AddQuery(intent.text)
-            FilterSettingsIntent.ShowAddQuery -> FilterSettingsAction.ShowAddQuery
-            FilterSettingsIntent.DismissAddQuery -> FilterSettingsAction.DismissAddQuery
             is FilterSettingsIntent.RemoveQuery -> FilterSettingsAction.RemoveQuery(intent.index)
-            FilterSettingsIntent.DismissSelectChat -> FilterSettingsAction.DismissSelectChat
-            FilterSettingsIntent.ShowSelectChat -> FilterSettingsAction.ShowSelectChat
             is FilterSettingsIntent.SetSelectedChats -> FilterSettingsAction.SetSelectedChats(intent.chatIds)
             is FilterSettingsIntent.RemoveChat -> FilterSettingsAction.RemoveChat(intent.chatId)
+            is FilterSettingsIntent.SetFilterDateTime -> FilterSettingsAction.SetFilterDateTime(intent.dateTime)
         }
     }
 
@@ -94,7 +92,7 @@ class FilterSettingsViewModel @Inject constructor(
                 queries = state.queries,
                 onlyChannels = state.onlyChannels,
                 chatIds = state.selectedChats.map { it.id },
-                dateLimit = System.currentTimeMillis()
+                dateLimit = state.filterDateTime.toMillis()
             )
         )
     }

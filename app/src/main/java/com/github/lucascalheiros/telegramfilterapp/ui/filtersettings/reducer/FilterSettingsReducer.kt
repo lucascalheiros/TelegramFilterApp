@@ -2,7 +2,17 @@ package com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer
 
 import com.github.lucascalheiros.telegramfilterapp.ui.Reducer
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.FilterSettingsUiState
-import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.FilterSettingsAction.*
+import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.FilterSettingsAction.AddQuery
+import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.FilterSettingsAction.Close
+import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.FilterSettingsAction.RemoveChat
+import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.FilterSettingsAction.RemoveQuery
+import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.FilterSettingsAction.SetAllChannelsState
+import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.FilterSettingsAction.SetFilter
+import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.FilterSettingsAction.SetFilterDateTime
+import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.FilterSettingsAction.SetSelectedChats
+import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.FilterSettingsAction.UpdateAvailableChats
+import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.FilterSettingsAction.UpdateTitle
+import com.github.lucascalheiros.common.datetime.millisToLocalDateTime
 import javax.inject.Inject
 
 
@@ -25,7 +35,8 @@ class FilterSettingsReducer @Inject constructor() :
                 filterTitle = action.filter.title,
                 queries = action.filter.queries,
                 onlyChannels = action.filter.onlyChannels,
-                selectedChatIds = action.filter.chatIds
+                selectedChatIds = action.filter.chatIds,
+                filterDateTime = action.filter.dateLimit.millisToLocalDateTime()
             )
 
             Close -> state.copy(close = true)
@@ -34,15 +45,6 @@ class FilterSettingsReducer @Inject constructor() :
                 queries = state.queries.toMutableList().apply {
                     add(action.text)
                 },
-                showAddQueryDialog = false
-            )
-
-            ShowAddQuery -> state.copy(
-                showAddQueryDialog = true
-            )
-
-            DismissAddQuery -> state.copy(
-                showAddQueryDialog = false
             )
 
             is RemoveQuery -> state.copy(
@@ -51,25 +53,20 @@ class FilterSettingsReducer @Inject constructor() :
                 }
             )
 
-            DismissSelectChat -> state.copy(
-                showSelectChatDialog = false
-            )
-
-            ShowSelectChat -> state.copy(
-                showSelectChatDialog = true
-            )
-
             is UpdateAvailableChats -> state.copy(
                 availableChats = action.chats
             )
 
             is SetSelectedChats -> state.copy(
                 selectedChatIds = action.chatIds,
-                showSelectChatDialog = false
             )
 
             is RemoveChat -> state.copy(
                 selectedChatIds = state.selectedChatIds.filter { it != action.chatId }
+            )
+
+            is SetFilterDateTime -> state.copy(
+                filterDateTime = action.dateTime
             )
         }
     }

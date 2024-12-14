@@ -15,5 +15,5 @@ fun FilterMessagesScreen(
         viewModel.dispatch(FilterMessagesIntent.LoadData)
     }
     val state = viewModel.state.collectAsState()
-    FilterMessagesScreenContent(state.value, viewModel::dispatch, onBackPressed)
+    FilterMessagesScreenContent(state.value, onBackPressed)
 }

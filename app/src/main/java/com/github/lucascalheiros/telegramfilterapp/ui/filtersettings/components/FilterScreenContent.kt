@@ -2,21 +2,17 @@ package com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material3.Card
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -34,29 +30,6 @@ fun FilterScreenContent(
     dispatch: (FilterSettingsIntent) -> Unit = {},
     onBackPressed: () -> Unit = {}
 ) {
-    if (state.showAddQueryDialog) {
-        AddQueryDialog(
-            onCancel = {
-                dispatch(FilterSettingsIntent.DismissAddQuery)
-            },
-            onConfirm = {
-                dispatch(FilterSettingsIntent.AddQuery(it))
-            }
-        )
-    }
-
-    if (state.showSelectChatDialog) {
-        SelectChatDialog(
-            availableChats = state.availableChats,
-            selectedChats = state.selectedChats,
-            onCancel = {
-                dispatch(FilterSettingsIntent.DismissSelectChat)
-            },
-            onConfirm = {
-                dispatch(FilterSettingsIntent.SetSelectedChats(it))
-            }
-        )
-    }
     Scaffold(
         topBar = {
             FilterSettingsTopBar(onBackPressed)
@@ -72,56 +45,40 @@ fun FilterScreenContent(
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxSize()
         ) {
-            TextField(
-                value = state.filterTitle,
-                onValueChange = { dispatch(FilterSettingsIntent.UpdateTitle(it)) },
-                label = { Text(stringResource(R.string.title)) }
-            )
-            Spacer(Modifier.height(16.dp))
-            QueriesList(
-                queries = state.queries,
-                onRemoveIndex = { dispatch(FilterSettingsIntent.RemoveQuery(it)) }
-            )
-            TextButton(
-                { dispatch(FilterSettingsIntent.ShowAddQuery) },
-                modifier = Modifier.fillMaxWidth()
+            Card(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .wrapContentHeight()
             ) {
-                Icon(painterResource(R.drawable.ic_add), null)
-                Text(stringResource(R.string.query))
-            }
-            Spacer(Modifier.height(16.dp))
-            Text(
-                stringResource(R.string.filter_message_source),
-                style = MaterialTheme.typography.titleMedium
-            )
-            Spacer(Modifier.height(16.dp))
-            Column(Modifier.selectableGroup()) {
-                RadioWithText(
-                    selected = state.onlyChannels,
-                    onClick = { dispatch(FilterSettingsIntent.SetAllChannelsState(true)) },
-                    text = stringResource(R.string.all_channels)
-                )
-                Spacer(Modifier.height(8.dp))
-                RadioWithText(
-                    selected = !state.onlyChannels,
-                    onClick = { dispatch(FilterSettingsIntent.SetAllChannelsState(false)) },
-                    text = stringResource(R.string.selected_chats)
-                )
-            }
-            AnimatedVisibility(!state.onlyChannels) {
-                SelectedChannelsAndChatsSection(
-                    state,
-                    { dispatch(FilterSettingsIntent.RemoveChat(it)) },
-                    { dispatch(FilterSettingsIntent.ShowSelectChat) }
-                )
+                TitleOption(state.filterTitle, dispatch)
+                HorizontalDivider()
+                QueriesOption(state.queries, dispatch)
+                HorizontalDivider()
+                FilterDateTimeOption(state.filterDateTime, dispatch)
+                HorizontalDivider()
+                SourcesOption(state.onlyChannels, dispatch)
+                AnimatedVisibility(!state.onlyChannels) {
+                    Column {
+                        HorizontalDivider()
+                        SettingItem(stringResource(R.string.selected_sources)) {
+                            Text(
+                                state.selectedChatIds.size.toString(),
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                        SelectedChannelsAndChatsSection(
+                            state,
+                            { dispatch(FilterSettingsIntent.RemoveChat(it)) },
+                            { dispatch(FilterSettingsIntent.SetSelectedChats(it)) }
+                        )
+                    }
+                }
             }
         }
     }
 }
-
 
 @Preview
 @Composable

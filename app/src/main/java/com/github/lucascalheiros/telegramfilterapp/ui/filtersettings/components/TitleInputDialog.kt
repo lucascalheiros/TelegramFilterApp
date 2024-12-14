@@ -25,7 +25,7 @@ import androidx.compose.ui.window.Dialog
 import com.github.lucascalheiros.telegramfilterapp.R
 
 @Composable
-fun AddQueryDialog(
+fun TitleInputDialog(
     onCancel: () -> Unit,
     onConfirm: (String) -> Unit
 ) {
@@ -45,7 +45,7 @@ fun AddQueryDialog(
                     horizontalArrangement = Arrangement.Start,
                 ) {
                     Text(
-                        stringResource(R.string.add_query_text),
+                        text = stringResource(R.string.title_input),
                         style = MaterialTheme.typography.titleLarge
                     )
                 }
@@ -53,7 +53,7 @@ fun AddQueryDialog(
                 TextField(
                     value = queryText,
                     onValueChange = { queryText = it },
-                    label = { Text(stringResource(R.string.query)) },
+                    label = { Text(stringResource(R.string.title)) },
                 )
                 Spacer(Modifier.height(24.dp))
                 Row(

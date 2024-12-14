@@ -1,17 +1,16 @@
 package com.github.lucascalheiros.telegramfilterapp.ui.filtersettings
 
 import com.github.lucascalheiros.domain.model.ChatInfo
+import java.time.LocalDateTime
 
 data class FilterSettingsUiState(
     val filterTitle: String = "",
+    val filterDateTime: LocalDateTime = LocalDateTime.now(),
     val queries: List<String> = listOf(),
     val onlyChannels: Boolean = true,
     val availableChats: List<ChatInfo> = listOf(),
     val selectedChatIds: List<Long> = listOf(),
-    val close: Boolean = false,
-    val showAddQueryDialog: Boolean = false,
-    val showSaveDisabledHint: Boolean = false,
-    val showSelectChatDialog: Boolean = false
+    val close: Boolean = false
 ) {
     val isSaveEnabled: Boolean
         get() {
