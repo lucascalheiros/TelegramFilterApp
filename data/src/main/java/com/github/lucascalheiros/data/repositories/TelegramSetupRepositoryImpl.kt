@@ -16,6 +16,7 @@ import javax.inject.Inject
 class TelegramSetupRepositoryImpl @Inject constructor(
     private val telegramClientWrapper: TelegramClientWrapper
 ): TelegramSetupRepository {
+
     override fun authorizationStep(): Flow<AuthorizationStep?> {
         return telegramClientWrapper.currentAuthState.map { tdState ->
             if (tdState is UpdateAuthorizationState) {
@@ -43,6 +44,10 @@ class TelegramSetupRepositoryImpl @Inject constructor(
     override suspend fun sendPassword(data: String) {
         val checkAuthenticationPassword = TdApi.CheckAuthenticationPassword(data)
         telegramClientWrapper.send(checkAuthenticationPassword)
+    }
+
+    override suspend fun logout() {
+        telegramClientWrapper.send(TdApi.LogOut())
     }
 
 }

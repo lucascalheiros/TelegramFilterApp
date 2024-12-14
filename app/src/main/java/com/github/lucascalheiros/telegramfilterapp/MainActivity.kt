@@ -1,16 +1,11 @@
 package com.github.lucascalheiros.telegramfilterapp
 
-import android.Manifest
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.core.content.ContextCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -34,7 +29,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        askNotificationPermission()
         setContent {
             val navHostController = rememberNavController()
 
@@ -71,9 +65,16 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                     composable<NavRoute.FilterList> {
-                        FilterListScreen {
-                            navHostController.navigate(it)
-                        }
+                        FilterListScreen(
+                            onNav = { navHostController.navigate(it) },
+                            onLogout = {
+                                navHostController.navigate(NavRoute.Setup) {
+                                    popUpTo<NavRoute.FilterList> {
+                                        inclusive = true
+                                    }
+                                }
+                            }
+                        )
                     }
                     composable<NavRoute.FilterSettings> {
                         FilterSettingsScreen {
@@ -86,28 +87,6 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }
-            }
-        }
-    }
-
-    // Declare the launcher at the top of your Activity/Fragment:
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission(),
-    ) { isGranted: Boolean ->
-
-
-    }
-
-    private fun askNotificationPermission() {
-        // This is only necessary for API level >= 33 (TIRAMISU)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
-                PackageManager.PERMISSION_GRANTED
-            ) {
-                // FCM SDK (and your app) can post notifications.
-            } else {
-                // Directly ask for the permission
-                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
         }
     }

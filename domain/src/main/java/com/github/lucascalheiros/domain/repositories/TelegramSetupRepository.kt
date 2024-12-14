@@ -8,4 +8,5 @@ interface TelegramSetupRepository {
     suspend fun sendNumber(data: String)
     suspend fun sendCode(data: String)
     suspend fun sendPassword(data: String)
+    suspend fun logout()
 }

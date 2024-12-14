@@ -25,4 +25,5 @@ class FilterLocalDataSource @Inject constructor(
     suspend fun deleteFilter(id: Long) {
         dao.deleteFilter(id)
     }
+
 }

@@ -11,6 +11,7 @@ import javax.inject.Inject
 class ChatRepositoryImpl @Inject constructor(
     private val telegramClientWrapper: TelegramClientWrapper
 ): ChatRepository  {
+
     override fun getChats(): Flow<List<ChatInfo>> {
         return telegramClientWrapper.chats.map { chatMap ->
             chatMap.values.mapNotNull {
@@ -25,4 +26,5 @@ class ChatRepositoryImpl @Inject constructor(
     override suspend fun update() {
         telegramClientWrapper.send(TdApi.LoadChats(null, 99999))
     }
+
 }

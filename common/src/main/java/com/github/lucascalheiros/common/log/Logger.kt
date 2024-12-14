@@ -6,7 +6,7 @@ import java.util.logging.Logger
 
 fun Any.log(logLevel: LogLevel, message: String, throwable: Throwable? = null) {
     val tag = this::class.simpleName
-    val logger = Logger.getLogger(tag ?: "")
+    val logger = Logger.getLogger(tag ?: "NO TAG")
 
     return when (logLevel) {
         LogLevel.VERBOSE -> logger.log(Level.FINER, message, throwable)

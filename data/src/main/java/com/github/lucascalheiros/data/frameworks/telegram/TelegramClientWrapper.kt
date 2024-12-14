@@ -84,7 +84,11 @@ class TelegramClientWrapper @Inject constructor(
                     longArrayOf()
                 )
                 send(deviceTokenFirebaseCloudMessaging)
+            }
 
+            is TdApi.AuthorizationStateClosed -> {
+                telegramClient = null
+                setup()
             }
         }
     }

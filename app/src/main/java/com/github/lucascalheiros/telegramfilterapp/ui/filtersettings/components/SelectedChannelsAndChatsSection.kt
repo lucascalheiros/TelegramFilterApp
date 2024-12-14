@@ -35,7 +35,7 @@ fun SelectedChannelsAndChatsSection(
 ) {
     var showSelectChatsDialog by remember { mutableStateOf(false) }
     if (showSelectChatsDialog) {
-        SelectChatDialog(
+        SelectChatBottomSheet(
             availableChats = state.availableChats,
             selectedChats = state.selectedChats,
             onCancel = {

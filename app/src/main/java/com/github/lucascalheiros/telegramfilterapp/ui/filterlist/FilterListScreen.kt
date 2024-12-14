@@ -1,107 +1,103 @@
 package com.github.lucascalheiros.telegramfilterapp.ui.filterlist
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.lucascalheiros.telegramfilterapp.R
+import com.github.lucascalheiros.common.log.logError
 import com.github.lucascalheiros.telegramfilterapp.navigation.NavRoute
+import com.github.lucascalheiros.telegramfilterapp.ui.filterlist.components.FilterListScreenContent
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @Composable
 fun FilterListScreen(
     viewModel: FilterListViewModel = hiltViewModel(),
-    onNav: (NavRoute) -> Unit = {}
+    onNav: (NavRoute) -> Unit = {},
+    onLogout: () -> Unit = {}
 ) {
+    val state by viewModel.state.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(Unit) {
         viewModel.dispatch(FilterListIntent.LoadData)
     }
-    val state = viewModel.state.collectAsState()
-    FilterChatsScreenContent(state.value, viewModel::dispatch, onNav)
+    HandlePostNotificationPermissionRequest()
+    HandleUiEvent(viewModel.event, snackbarHostState)
+    HandleLogoutState(state.logoutState, onLogout)
+    FilterListScreenContent(state, snackbarHostState, viewModel::dispatch, onNav)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FilterChatsScreenContent(
-    state: FilterListUiState,
-    dispatch: (FilterListIntent) -> Unit,
-    onNav: (NavRoute) -> Unit = {}
-) {
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(stringResource(R.string.alert_filter_settings))
-                }
-            )
-        },
-        floatingActionButton = {
-            FloatingActionButton({
-                onNav(NavRoute.FilterSettings())
+private fun HandleUiEvent(eventFlow: Flow<FilterListUiEvent>, snackbarHostState: SnackbarHostState) {
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        eventFlow.collectLatest {
+            launch(CoroutineExceptionHandler { _, throwable ->
+                logError("::uiEventHandler", throwable)
             }) {
-                Icon(painterResource(R.drawable.ic_add), stringResource(R.string.add_filter))
+                when (it) {
+                    is FilterListUiEvent.DeleteFilter.Failure -> snackbarHostState.showSnackbar(
+                        context.getString(
+                            R.string.failed_to_delete_filter,
+                            it.filterName
+                        )
+                    )
+
+                    is FilterListUiEvent.DeleteFilter.Success -> snackbarHostState.showSnackbar(
+                        context.getString(R.string.filter_deleted_with_success)
+                    )
+                }
             }
         }
-    ) { innerPadding ->
-        LazyColumn(
-            Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
+    }
+}
+
+@Composable
+private fun HandleLogoutState(logoutState: LogoutState, onLogout: () -> Unit) {
+    val isLogoutSuccessful = logoutState is LogoutState.Success
+    LaunchedEffect(isLogoutSuccessful) {
+        if (isLogoutSuccessful) {
+            onLogout()
+        }
+    }
+}
+
+@Composable
+private fun HandlePostNotificationPermissionRequest() {
+    val postNotificationResultLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { _ ->
+
+        }
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        askNotificationPermission(context, postNotificationResultLauncher)
+    }
+}
+
+private fun askNotificationPermission(
+    context: Context,
+    resultLauncher: ManagedActivityResultLauncher<String, Boolean>
+) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) !=
+            PackageManager.PERMISSION_GRANTED
         ) {
-            itemsIndexed(state.filters, { _, info -> info.id }) { index, info ->
-                ListItem(
-                    modifier = Modifier.clickable {
-                        onNav(NavRoute.FilterMessages(info.id))
-                    },
-                    headlineContent = {
-                        Text(info.title)
-                    },
-                    supportingContent = {
-                        Text(stringResource(R.string.query_supporting_text, info.queries.joinToString(", ")))
-                    },
-                    trailingContent = {
-                        Row {
-                            IconButton({
-                                onNav(NavRoute.FilterSettings(info.id))
-                            }) {
-                                Icon(
-                                    painterResource(R.drawable.ic_edit),
-                                    stringResource(R.string.edit)
-                                )
-                            }
-                            IconButton({
-                                dispatch(FilterListIntent.DeleteFilter(info.id))
-                            }) {
-                                Icon(
-                                    painterResource(R.drawable.ic_delete),
-                                    stringResource(R.string.delete)
-                                )
-                            }
-                        }
-                    }
-                )
-                if (index != state.filters.lastIndex) {
-                    HorizontalDivider()
-                }
-            }
+            resultLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
 }
