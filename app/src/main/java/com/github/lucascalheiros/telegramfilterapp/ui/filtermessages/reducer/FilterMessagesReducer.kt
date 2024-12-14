@@ -6,6 +6,7 @@ import javax.inject.Inject
 
 class FilterMessagesReducer @Inject constructor() :
     Reducer<FilterMessagesUiState, FilterMessagesAction> {
+
     override fun reduce(
         state: FilterMessagesUiState,
         action: FilterMessagesAction
@@ -21,4 +22,5 @@ class FilterMessagesReducer @Inject constructor() :
             )
         }
     }
+
 }
