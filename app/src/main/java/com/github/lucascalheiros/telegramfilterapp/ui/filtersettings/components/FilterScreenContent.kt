@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.github.lucascalheiros.domain.model.ChatInfo
+import com.github.lucascalheiros.domain.model.ChatType
 import com.github.lucascalheiros.telegramfilterapp.R
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.FilterSettingsIntent
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.FilterSettingsUiState
@@ -87,7 +88,7 @@ private fun FilterScreenContentPreview() {
         FilterScreenContent(
             FilterSettingsUiState(
                 filterTitle = "Nintendo Sports",
-                availableChats = listOf(ChatInfo(0, "Test")),
+                availableChats = listOf(ChatInfo(0, "Test", ChatType.Chat)),
                 selectedChatIds = listOf(0)
             )
         ) {

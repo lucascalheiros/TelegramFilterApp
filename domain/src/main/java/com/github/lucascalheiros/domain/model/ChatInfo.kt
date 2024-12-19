@@ -5,5 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ChatInfo(
     val id: Long,
-    val title: String
+    val title: String,
+    val chatType: ChatType
 )
