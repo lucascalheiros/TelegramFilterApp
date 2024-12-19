@@ -46,6 +46,7 @@ class TelegramSetupViewModel @Inject constructor(
             is TelegramSetupIntent.UpdateCode -> TelegramSetupAction.UpdateCode(intent.value)
             is TelegramSetupIntent.UpdatePassword -> TelegramSetupAction.UpdatePassword(intent.value)
             is TelegramSetupIntent.UpdatePhoneNumber -> TelegramSetupAction.UpdatePhoneNumber(intent.value)
+            is TelegramSetupIntent.UpdateAreaCode -> TelegramSetupAction.UpdateAreaCode(intent.value)
         }
     }
 
@@ -68,7 +69,7 @@ class TelegramSetupViewModel @Inject constructor(
         }
         reduceAction(TelegramSetupAction.SetStepLoadingState(true))
         when (state.step) {
-            AuthorizationStep.PhoneInput -> sendSetupNumberUseCase(state.phoneNumber)
+            AuthorizationStep.PhoneInput -> sendSetupNumberUseCase(state.areaCode + state.phoneNumber)
 
             AuthorizationStep.CodeInput -> sendSetupCodeUseCase(state.code)
 

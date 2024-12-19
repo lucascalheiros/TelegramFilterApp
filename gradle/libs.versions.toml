@@ -1,5 +1,5 @@
 [versions]
-agp = "8.7.2"
+agp = "8.7.3"
 kotlin = "2.0.21"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -7,7 +7,7 @@ junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.9.3"
-composeBom = "2024.11.00"
+composeBom = "2024.12.01"
 appcompat = "1.7.0"
 material = "1.12.0"
 hilt = "2.51.1"
@@ -15,15 +15,16 @@ ksp = "2.0.21-1.0.28"
 libphonenumber = "8.13.50"
 composeViewModel = "2.8.7"
 room_version = "2.6.1"
-nav_version = "2.8.4"
+nav_version = "2.8.5"
 hilt_nav_version = "1.2.0"
 serialization_json = "1.7.3"
 jetbrainsKotlinJvm = "2.0.21"
 dagger = "2.52"
 googleServices = "4.4.2"
-firebaseBom = "33.6.0"
+firebaseBom = "33.7.0"
 firebaseMessagingKtx = "24.1.0"
 coroutines = "1.9.0"
+splashScreen = "1.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -58,6 +59,7 @@ firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom"}
 firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebaseMessagingKtx" }
 kotlin-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines"}
+androidx-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashScreen" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

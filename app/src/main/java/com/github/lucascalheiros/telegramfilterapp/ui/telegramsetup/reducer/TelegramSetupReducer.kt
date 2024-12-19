@@ -15,6 +15,7 @@ class TelegramSetupReducer @Inject constructor(): Reducer<TelegramSetupUiState, 
             is TelegramSetupAction.UpdatePhoneNumber -> state.copy(phoneNumber = action.phoneNumber)
             is TelegramSetupAction.UpdateStep -> state.copy(step = action.step, isStepLoading = false)
             is TelegramSetupAction.SetStepLoadingState -> state.copy(isStepLoading = action.isStepLoading)
+            is TelegramSetupAction.UpdateAreaCode -> state.copy(areaCode = action.areaCode)
         }
     }
 }
