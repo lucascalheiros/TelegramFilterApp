@@ -14,9 +14,11 @@ import com.github.lucascalheiros.data.model.FilterWithQueriesAndChats
 interface FilterDao {
 
     @Query("select * from FilterDb")
+    @Transaction
     suspend fun getFilters(): List<FilterWithQueriesAndChats>
 
     @Query("select * from FilterDb where id = :id")
+    @Transaction
     suspend fun getFilter(id: Long): FilterWithQueriesAndChats?
 
     @Query("delete from ChatToFilterInfoCrossRefDb where filterId = :id")
