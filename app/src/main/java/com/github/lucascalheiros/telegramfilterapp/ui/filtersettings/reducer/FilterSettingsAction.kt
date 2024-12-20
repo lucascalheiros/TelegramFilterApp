@@ -3,7 +3,6 @@ package com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer
 import com.github.lucascalheiros.domain.model.ChatInfo
 import com.github.lucascalheiros.domain.model.Filter
 import com.github.lucascalheiros.domain.model.FilterStrategy
-import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.FilterSettingsIntent
 import java.time.LocalDateTime
 
 sealed interface FilterSettingsAction {
