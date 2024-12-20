@@ -77,7 +77,8 @@ compose = [
     "androidx-material3",
     "androidx-compose-viewmodel",
     "compose-navigation",
-    "hilt-compose-navigation"
+    "hilt-compose-navigation",
+    "androidx-ui-tooling-preview"
 ]
 
 [plugins]
