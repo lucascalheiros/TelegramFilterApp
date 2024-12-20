@@ -49,4 +49,17 @@
     <string name="logout">Logout</string>
     <string name="failed_to_delete_filter">Failed to delete filter %1$s</string>
     <string name="filter_deleted_with_success">Filter deleted with success</string>
+    <string name="country_code">Area</string>
+    <string name="search">Search</string>
+    <string name="channels">Channels</string>
+    <string name="groups">Groups</string>
+    <string name="chats">Chats</string>
+    <string name="strategy">Strategy</string>
+    <string name="telegram_search">Telegram search</string>
+    <string name="local_regex">Local regex</string>
+    <string name="regex_input">Regex input</string>
+    <string name="info">Info</string>
+    <string name="info_local_regex">"Since telegram api don't provide a way to use regex search, this method requires that chat information to be fetched then locally filtered to match the regex.\n                                                |So if many chats are filtered and the limit date is not recent the filter content loading may be slow.\n                                            "</string>
+    <string name="info_telegram_search">Same method used on the official telegram client to search the messages it will search based on the presence of the query on the message</string>
+    <string name="regex_supporting_text">Regex: %1$s</string>
 </resources>
