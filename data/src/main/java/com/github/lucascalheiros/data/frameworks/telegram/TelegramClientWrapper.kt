@@ -17,12 +17,13 @@ import org.drinkless.tdlib.TdApi.RegisterDevice
 import javax.inject.Inject
 import javax.inject.Singleton
 import com.github.lucascalheiros.common.log.logDebug
+import com.github.lucascalheiros.data.notification.NotificationFilterHandler
 
 @Singleton
 class TelegramClientWrapper @Inject constructor(
     @ApplicationContext private val context: Context,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    private val notificationHandler: NotificationHandler
+    private val notificationFilterHandler: NotificationFilterHandler
 ) {
 
     private var telegramClient: Client? = null
@@ -94,22 +95,18 @@ class TelegramClientWrapper @Inject constructor(
     }
 
     private fun handle(state: TdApi.UpdateNewMessage) {
-        val messageId = state.message.id
-        val chatId = state.message.chatId
         val message = state.message
-        if (message.isOutgoing) {
+        val chat = getChat(message.chatId)
+        if (chat == null) {
+            logDebug("chat not found from message $message")
             return
         }
-        logDebug("newMessageReceived $message")
-        val title = getChat(message.chatId)?.title ?: ""
-        val content = message.content.textContent()
-        notificationHandler.handleNotification(
-            chatId,
-            messageId,
-            title,
-            content,
-            message.isChannelPost
-        )
+        if (message.isOutgoing) {
+            logDebug("message outgoing $message")
+            return
+        }
+        logDebug("message received, proceeding to filter $message")
+        notificationFilterHandler.handleNotification(message, chat)
     }
 
     private fun handle(state: TdApi.UpdateNewChat) {

@@ -1,4 +1,4 @@
-package com.github.lucascalheiros.telegramfilterapp.notification
+package com.github.lucascalheiros.data.notification
 
 import com.github.lucascalheiros.common.log.logDebug
 import com.github.lucascalheiros.data.frameworks.telegram.TelegramClientWrapper

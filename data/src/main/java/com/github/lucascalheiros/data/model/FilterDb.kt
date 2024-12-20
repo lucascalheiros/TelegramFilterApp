@@ -2,11 +2,13 @@ package com.github.lucascalheiros.data.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.github.lucascalheiros.domain.model.FilterStrategy
 
 @Entity
 data class FilterDb(
     @PrimaryKey(autoGenerate = true) val id: Long,
     val title: String,
-    val onlyChannels: Boolean,
-    val updateAt: Long
+    val limitDate: Long,
+    val regex: String,
+    val strategy: FilterStrategyDb
 )

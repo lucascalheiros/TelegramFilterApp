@@ -1,12 +1,12 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 3,
-    "identityHash": "7157c59b466326377b2cb9758d41cea5",
+    "version": 4,
+    "identityHash": "62b38c13a67c8ab98b16be86bd28b791",
     "entities": [
       {
         "tableName": "FilterDb",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `updateAt` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `limitDate` INTEGER NOT NULL, `regex` TEXT NOT NULL, `strategy` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -21,9 +21,21 @@
             "notNull": true
           },
           {
-            "fieldPath": "updateAt",
-            "columnName": "updateAt",
+            "fieldPath": "limitDate",
+            "columnName": "limitDate",
             "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "regex",
+            "columnName": "regex",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "strategy",
+            "columnName": "strategy",
+            "affinity": "TEXT",
             "notNull": true
           }
         ],
@@ -94,7 +106,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7157c59b466326377b2cb9758d41cea5')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '62b38c13a67c8ab98b16be86bd28b791')"
     ]
   }
 }

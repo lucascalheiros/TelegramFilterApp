@@ -7,7 +7,8 @@ data class Filter(
     val id: Long,
     val title: String,
     val queries: List<String>,
-    val onlyChannels: Boolean,
+    val regex: String,
     val chatIds: List<Long>,
-    val dateLimit: Long
+    val limitDate: Long,
+    val strategy: FilterStrategy
 )

@@ -1,9 +1,13 @@
 package com.github.lucascalheiros.data.di
 
 import android.content.Context
+import androidx.room.AutoMigration
 import androidx.room.Room
+import androidx.room.migration.AutoMigrationSpec
 import com.github.lucascalheiros.data.local.AppDatabase
 import com.github.lucascalheiros.data.local.MIGRATION_1_2
+import com.github.lucascalheiros.data.local.MIGRATION_3_4
+import com.github.lucascalheiros.data.local.MIGRATION_4_5
 import com.github.lucascalheiros.data.local.dao.FilterDao
 import com.github.lucascalheiros.data.repositories.ChatRepositoryImpl
 import com.github.lucascalheiros.data.repositories.FilterRepositoryImpl
@@ -30,9 +34,11 @@ object DataModule {
             context,
             AppDatabase::class.java,
             "app-database"
-        ).fallbackToDestructiveMigration()
-            .addMigrations(MIGRATION_1_2)
-            .build()
+        ).addMigrations(
+            MIGRATION_1_2,
+            MIGRATION_3_4,
+            MIGRATION_4_5
+        ).build()
     }
 
     @Provides
