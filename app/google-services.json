@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "252738293206",
+    "project_id": "telegram-filter-app",
+    "storage_bucket": "telegram-filter-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:252738293206:android:6dbeb9ca57d57c737a2877",
+        "android_client_info": {
+          "package_name": "com.github.lucascalheiros.telegramfilterapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8_7XfVwfuxxNDIS3x7GOYT-EWYsjj4vs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
