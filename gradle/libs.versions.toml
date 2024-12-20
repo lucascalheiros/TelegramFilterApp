@@ -74,8 +74,6 @@ compose = [
     "androidx-activity-compose",
     "androidx-ui",
     "androidx-ui-graphics",
-    "androidx-ui-tooling",
-    "androidx-ui-tooling-preview",
     "androidx-material3",
     "androidx-compose-viewmodel",
     "compose-navigation",
