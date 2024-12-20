@@ -1,4 +1,4 @@
-package com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.components
+package com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.components.options.queries
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,10 +29,10 @@ import com.github.lucascalheiros.telegramfilterapp.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddQueryDialog(
+fun ManageQueriesSheet(
     queries: List<String>,
     onRemoveIndex: (Int) -> Unit,
-    addQuery: (String) -> Unit,
+    onAddQuery: (String) -> Unit,
     onClose: () -> Unit
 ) {
     var queryText by remember { mutableStateOf("") }
@@ -74,7 +74,7 @@ fun AddQueryDialog(
                 Spacer(Modifier.weight(1f))
                 IconButton(
                     {
-                        addQuery(queryText)
+                        onAddQuery(queryText)
                         queryText = ""
                     },
                     enabled = queryText.isNotBlank()

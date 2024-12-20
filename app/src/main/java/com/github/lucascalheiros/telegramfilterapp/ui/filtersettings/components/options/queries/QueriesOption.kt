@@ -1,4 +1,4 @@
-package com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.components
+package com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.components.options.queries
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
@@ -13,10 +13,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import com.github.lucascalheiros.telegramfilterapp.R
-import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.FilterSettingsIntent
+import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.components.SettingItem
 
 @Composable
-fun QueriesOption(queries: List<String>, dispatch: (FilterSettingsIntent) -> Unit) {
+fun QueriesOption(
+    queries: List<String>,
+    onRemoveIndex: (Int) -> Unit,
+    onAddQuery: (String) -> Unit
+) {
     var showTitleInputDialog by remember { mutableStateOf(false) }
     SettingItem(stringResource(R.string.queries), { showTitleInputDialog = true }) {
         Text(
@@ -29,10 +33,10 @@ fun QueriesOption(queries: List<String>, dispatch: (FilterSettingsIntent) -> Uni
         )
     }
     if (showTitleInputDialog) {
-        AddQueryDialog(
+        ManageQueriesSheet(
             queries,
-            { dispatch(FilterSettingsIntent.RemoveQuery(it)) },
-            { dispatch(FilterSettingsIntent.AddQuery(it)) },
+            onRemoveIndex,
+            onAddQuery,
             { showTitleInputDialog = false }
         )
     }

@@ -1,6 +1,7 @@
 package com.github.lucascalheiros.telegramfilterapp.mocks
 
 import com.github.lucascalheiros.domain.model.Filter
+import com.github.lucascalheiros.domain.model.FilterStrategy
 
 object FilterMocks {
     fun defaultFilter(): Filter {
@@ -8,9 +9,10 @@ object FilterMocks {
             id = 1L,
             title = "Default Filter",
             queries = listOf("query1", "query2"),
-            onlyChannels = false,
+            regex = "",
             chatIds = listOf(1001L, 1002L, 1003L),
-            dateLimit = 1672531200000L // Example timestamp
+            limitDate = 1672531200000L,
+            strategy = FilterStrategy.LocalRegexSearch
         )
     }
 
@@ -19,9 +21,10 @@ object FilterMocks {
             id = 2L,
             title = "Filter with Empty Queries",
             queries = emptyList(),
-            onlyChannels = true,
+            regex = "",
             chatIds = listOf(2001L, 2002L),
-            dateLimit = 1672531200000L
+            limitDate = 1672531200000L,
+            strategy = FilterStrategy.LocalRegexSearch
         )
     }
 
@@ -30,9 +33,10 @@ object FilterMocks {
             id = 3L,
             title = "Filter with Specific Date Limit",
             queries = listOf("specificQuery"),
-            onlyChannels = false,
+            regex = "",
             chatIds = listOf(3001L),
-            dateLimit = dateLimit
+            limitDate = dateLimit,
+            strategy = FilterStrategy.LocalRegexSearch
         )
     }
 
@@ -41,9 +45,10 @@ object FilterMocks {
             id = 4L,
             title = "Filter with No Chat IDs",
             queries = listOf("query3"),
-            onlyChannels = true,
+            regex = "",
             chatIds = emptyList(),
-            dateLimit = 1672531200000L
+            limitDate = 1672531200000L,
+            strategy = FilterStrategy.LocalRegexSearch
         )
     }
 }

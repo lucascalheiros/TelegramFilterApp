@@ -1,4 +1,4 @@
-package com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.components
+package com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.components.options.selectedchats
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,7 +28,7 @@ import com.github.lucascalheiros.telegramfilterapp.R
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.FilterSettingsUiState
 
 @Composable
-fun SelectedChannelsAndChatsSection(
+fun SelectedChatsOption(
     state: FilterSettingsUiState,
     onRemoveChat: (Long) -> Unit,
     onSetSelectedChats: (List<Long>) -> Unit

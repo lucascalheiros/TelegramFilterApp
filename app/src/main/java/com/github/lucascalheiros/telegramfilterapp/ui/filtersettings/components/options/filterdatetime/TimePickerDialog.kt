@@ -1,4 +1,4 @@
-package com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.components
+package com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.components.options.filterdatetime
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column

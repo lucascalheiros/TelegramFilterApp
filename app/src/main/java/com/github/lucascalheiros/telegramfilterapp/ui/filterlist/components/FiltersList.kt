@@ -16,6 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.github.lucascalheiros.domain.model.Filter
+import com.github.lucascalheiros.domain.model.FilterStrategy
 import com.github.lucascalheiros.telegramfilterapp.R
 import com.github.lucascalheiros.telegramfilterapp.ui.theme.TelegramFilterAppTheme
 
@@ -24,7 +25,7 @@ fun FiltersList(
     filters: List<Filter>,
     onOpenFilterMessages: (filterId: Long) -> Unit = {},
     onOpenFilterSettings: (filterId: Long) -> Unit = {},
-    onDeleteFilter: (filterId: Long, filterTitle: String) -> Unit = { _, _ ->}
+    onDeleteFilter: (filterId: Long, filterTitle: String) -> Unit = { _, _ -> }
 ) {
     LazyColumn(
         Modifier
@@ -39,12 +40,7 @@ fun FiltersList(
                     Text(info.title)
                 },
                 supportingContent = {
-                    Text(
-                        stringResource(
-                            R.string.query_supporting_text,
-                            info.queries.joinToString(", ")
-                        )
-                    )
+                    Text(info.queryOrRegexFilter())
                 },
                 trailingContent = {
                     Row {
@@ -74,10 +70,35 @@ fun FiltersList(
     }
 }
 
+@Composable
+fun Filter.queryOrRegexFilter(): String {
+    return when (strategy) {
+        FilterStrategy.TelegramQuerySearch -> stringResource(
+            R.string.query_supporting_text,
+            queries.joinToString(", ")
+        )
+
+        FilterStrategy.LocalRegexSearch -> stringResource(R.string.regex_supporting_text, regex)
+    }
+}
+
+
 @Preview
 @Composable
 fun FilterListPreview() {
     TelegramFilterAppTheme {
-        FiltersList(filters = listOf(Filter(0, "Filter", listOf("Word 1", "Word 2"), onlyChannels = true, listOf(), 0)))
+        FiltersList(
+            filters = listOf(
+                Filter(
+                    0,
+                    "Filter",
+                    listOf("Word 1", "Word 2"),
+                    "",
+                    listOf(),
+                    0,
+                    FilterStrategy.TelegramQuerySearch
+                )
+            )
+        )
     }
 }

@@ -65,6 +65,7 @@ class FilterListViewModel @Inject constructor(
             val filters = getFilterUseCase.getFilters()
             FilterLoadAction.Success(filters)
         } catch (e: Exception) {
+            logError("::handleLoadData", e)
             FilterLoadAction.Failure
         }
     }

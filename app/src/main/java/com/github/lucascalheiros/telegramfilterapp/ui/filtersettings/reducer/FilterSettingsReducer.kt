@@ -6,7 +6,6 @@ import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.Fil
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.FilterSettingsAction.Close
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.FilterSettingsAction.RemoveChat
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.FilterSettingsAction.RemoveQuery
-import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.FilterSettingsAction.SetAllChannelsState
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.FilterSettingsAction.SetFilter
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.FilterSettingsAction.SetFilterDateTime
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.FilterSettingsAction.SetSelectedChats
@@ -23,10 +22,6 @@ class FilterSettingsReducer @Inject constructor() :
         state: FilterSettingsUiState, action: FilterSettingsAction
     ): FilterSettingsUiState {
         return when (action) {
-            is SetAllChannelsState -> state.copy(
-                onlyChannels = action.state
-            )
-
             is UpdateTitle -> state.copy(
                 filterTitle = action.title
             )
@@ -34,9 +29,10 @@ class FilterSettingsReducer @Inject constructor() :
             is SetFilter -> state.copy(
                 filterTitle = action.filter.title,
                 queries = action.filter.queries,
-                onlyChannels = action.filter.onlyChannels,
+                regex = action.filter.regex,
+                strategy = action.filter.strategy,
                 selectedChatIds = action.filter.chatIds,
-                filterDateTime = action.filter.dateLimit.millisToLocalDateTime()
+                filterDateTime = action.filter.limitDate.millisToLocalDateTime()
             )
 
             Close -> state.copy(close = true)
@@ -68,6 +64,10 @@ class FilterSettingsReducer @Inject constructor() :
             is SetFilterDateTime -> state.copy(
                 filterDateTime = action.dateTime
             )
+
+            is FilterSettingsAction.SetFilterStrategy -> state.copy(strategy = action.strategy)
+
+            is FilterSettingsAction.UpdateRegex -> state.copy(regex = action.regex)
         }
     }
 

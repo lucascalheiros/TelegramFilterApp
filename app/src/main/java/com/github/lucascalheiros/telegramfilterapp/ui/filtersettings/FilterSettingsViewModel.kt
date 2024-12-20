@@ -48,27 +48,22 @@ class FilterSettingsViewModel @Inject constructor(
 
     private suspend fun intentHandleMiddleware(intent: FilterSettingsIntent): FilterSettingsAction? {
         return when (intent) {
-            FilterSettingsIntent.LoadData -> {
-                getChatsUseCase.update()
-                if (watchChatsJob?.isActive != true) {
-                    watchChatsJob = viewModelScope.watchChatUpdate()
-                }
-
-                val filter = loadFilter() ?: return null
-                FilterSettingsAction.SetFilter(filter)
-            }
-
-            FilterSettingsIntent.Save -> {
-                save()
-                FilterSettingsAction.Close
-            }
-            is FilterSettingsIntent.SetAllChannelsState -> FilterSettingsAction.SetAllChannelsState(intent.state)
-            is FilterSettingsIntent.UpdateTitle -> FilterSettingsAction.UpdateTitle(intent.value)
+            FilterSettingsIntent.LoadData -> loadData()
+            FilterSettingsIntent.Save -> save()
+            is FilterSettingsIntent.UpdateTitle -> FilterSettingsAction.UpdateTitle(intent.title)
             is FilterSettingsIntent.AddQuery -> FilterSettingsAction.AddQuery(intent.text)
             is FilterSettingsIntent.RemoveQuery -> FilterSettingsAction.RemoveQuery(intent.index)
             is FilterSettingsIntent.SetSelectedChats -> FilterSettingsAction.SetSelectedChats(intent.chatIds)
             is FilterSettingsIntent.RemoveChat -> FilterSettingsAction.RemoveChat(intent.chatId)
-            is FilterSettingsIntent.SetFilterDateTime -> FilterSettingsAction.SetFilterDateTime(intent.dateTime)
+            is FilterSettingsIntent.SetFilterDateTime -> FilterSettingsAction.SetFilterDateTime(
+                intent.dateTime
+            )
+
+            is FilterSettingsIntent.SetFilterStrategy -> FilterSettingsAction.SetFilterStrategy(
+                intent.strategy
+            )
+
+            is FilterSettingsIntent.UpdateRegex -> FilterSettingsAction.UpdateRegex(intent.regex)
         }
     }
 
@@ -83,23 +78,43 @@ class FilterSettingsViewModel @Inject constructor(
         return getFilterUseCase.getFilter(filterId)
     }
 
-    private suspend fun save() {
-        val state = state.value
-        saveFilterUseCase(
-            Filter(
-                id = filterId,
-                title = state.filterTitle,
-                queries = state.queries,
-                onlyChannels = state.onlyChannels,
-                chatIds = state.selectedChats.map { it.id },
-                dateLimit = state.filterDateTime.toMillis()
+    private suspend fun save(): FilterSettingsAction? {
+        return try {
+            val state = state.value
+            saveFilterUseCase(
+                Filter(
+                    id = filterId,
+                    title = state.filterTitle,
+                    queries = state.queries,
+                    regex = state.regex,
+                    chatIds = state.selectedChats.map { it.id },
+                    limitDate = state.filterDateTime.toMillis(),
+                    strategy = state.strategy
+                )
             )
-        )
+            FilterSettingsAction.Close
+        } catch (e: Exception) {
+            null
+        }
     }
 
     private fun CoroutineScope.watchChatUpdate() = launch {
         getChatsUseCase().collectLatest {
             reduceAction(FilterSettingsAction.UpdateAvailableChats(it))
+        }
+    }
+
+    private suspend fun loadData(): FilterSettingsAction? {
+        return try {
+            getChatsUseCase.update()
+            if (watchChatsJob?.isActive != true) {
+                watchChatsJob = viewModelScope.watchChatUpdate()
+            }
+
+            val filter = loadFilter() ?: return null
+            FilterSettingsAction.SetFilter(filter)
+        } catch (e: Exception) {
+            null
         }
     }
 }
