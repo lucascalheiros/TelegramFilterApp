@@ -7,10 +7,10 @@ plugins {
 
 android {
     namespace = "com.github.lucascalheiros.data"
-    compileSdk = 34
+    compileSdk = Configs.COMPILE_SDK
 
     defaultConfig {
-        minSdk = 31
+        minSdk = Configs.MIN_SDK
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -26,11 +26,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = Configs.sourceCompatibility
+        targetCompatibility = Configs.targetCompatibility
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = Configs.JVM_TARGET
     }
 
     ksp {

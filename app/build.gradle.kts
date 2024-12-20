@@ -10,15 +10,15 @@ plugins {
 }
 
 android {
-    namespace = "com.github.lucascalheiros.telegramfilterapp"
-    compileSdk = 35
+    namespace = Configs.APPLICATION_ID
+    compileSdk = Configs.COMPILE_SDK
 
     defaultConfig {
-        applicationId = "com.github.lucascalheiros.telegramfilterapp"
-        minSdk = 31
-        targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        applicationId = Configs.APPLICATION_ID
+        minSdk = Configs.MIN_SDK
+        targetSdk = Configs.TARGET_SDK
+        versionCode = Configs.VERSION_CODE
+        versionName = Configs.VERSION_NAME
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -33,11 +33,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = Configs.sourceCompatibility
+        targetCompatibility = Configs.targetCompatibility
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = Configs.JVM_TARGET
     }
     buildFeatures {
         compose = true
