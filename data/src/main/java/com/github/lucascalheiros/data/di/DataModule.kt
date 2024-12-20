@@ -1,9 +1,7 @@
 package com.github.lucascalheiros.data.di
 
 import android.content.Context
-import androidx.room.AutoMigration
 import androidx.room.Room
-import androidx.room.migration.AutoMigrationSpec
 import com.github.lucascalheiros.data.local.AppDatabase
 import com.github.lucascalheiros.data.local.MIGRATION_1_2
 import com.github.lucascalheiros.data.local.MIGRATION_3_4

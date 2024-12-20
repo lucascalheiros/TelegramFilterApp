@@ -2,7 +2,6 @@ package com.github.lucascalheiros.data.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.github.lucascalheiros.domain.model.FilterStrategy
 
 @Entity
 data class FilterDb(
