@@ -45,16 +45,12 @@ android {
 }
 
 dependencies {
-    implementation(project(":tdlib"))
     implementation(project(":data"))
     implementation(project(":domain"))
     implementation(project(":common"))
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.messaging.ktx)
-    ksp(libs.room.compiler)
-    implementation(libs.room.ktx)
-    implementation(libs.room.runtime)
     implementation(libs.libphonenumber)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.android)
@@ -70,6 +66,7 @@ dependencies {
     implementation(libs.compose.navigation)
     implementation(libs.serialization.json)
     implementation(libs.hilt.compose.navigation)
+    implementation(libs.androidx.splashscreen)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
