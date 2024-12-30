@@ -1,5 +1,6 @@
 package com.github.lucascalheiros.telegramfilterapp.ui.filterlist.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -21,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.github.lucascalheiros.telegramfilterapp.R
 import com.github.lucascalheiros.telegramfilterapp.navigation.NavRoute
@@ -43,7 +45,7 @@ fun FilterListScreenContent(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(stringResource(R.string.alert_filter_settings))
+                    Text(stringResource(R.string.filters))
                 },
                 actions = {
                     if (state.isLogoutOnGoing) {
@@ -69,13 +71,29 @@ fun FilterListScreenContent(
             }
         }
     ) { innerPadding ->
-        Box(Modifier.padding(innerPadding)) {
+        Box(Modifier
+            .padding(innerPadding)
+            .fillMaxSize()
+        ) {
             if (state.isLogoutOnGoing) {
                 CircularProgressIndicator(
                     Modifier
                         .fillMaxSize()
                         .wrapContentSize(Alignment.Center)
                         .size(60.dp)
+                )
+                return@Scaffold
+            }
+            if (state.filters.isEmpty()) {
+                Text(
+                    stringResource(R.string.you_have_no_filters_to_display_click_on_the_button_or_on_this_text_to_create_a_filter),
+                    Modifier
+                        .padding(32.dp)
+                        .clickable {
+                            onNav(NavRoute.FilterSettings())
+                        }
+                        .align(Alignment.Center),
+                    textAlign = TextAlign.Center
                 )
                 return@Scaffold
             }
