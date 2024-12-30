@@ -15,7 +15,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -27,6 +26,7 @@ import com.github.lucascalheiros.telegramfilterapp.ui.filtermessages.FilterMessa
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.FilterSettingsScreen
 import com.github.lucascalheiros.telegramfilterapp.ui.telegramsetup.TelegramSetupScreen
 import com.github.lucascalheiros.telegramfilterapp.ui.theme.TelegramFilterAppTheme
+import com.github.lucascalheiros.telegramfilterapp.util.setupSplashScreen
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.SharingStarted
@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        installSplashScreen().setKeepOnScreenCondition {
+        setupSplashScreen().setKeepOnScreenCondition {
             authStep.value == null
         }
         enableEdgeToEdge()
