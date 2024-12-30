@@ -1,5 +1,6 @@
 package com.github.lucascalheiros.telegramfilterapp
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,15 +13,20 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.core.util.Consumer
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.github.lucascalheiros.domain.model.AuthorizationStep
 import com.github.lucascalheiros.domain.usecases.GetAuthorizationStepUseCase
 import com.github.lucascalheiros.telegramfilterapp.navigation.NavRoute
+import com.github.lucascalheiros.telegramfilterapp.notification.NotificationActions
 import com.github.lucascalheiros.telegramfilterapp.ui.filterlist.FilterListScreen
 import com.github.lucascalheiros.telegramfilterapp.ui.filtermessages.FilterMessagesScreen
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.FilterSettingsScreen
@@ -43,13 +49,21 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val openFilterAction = NotificationActions.OpenFilterMessages.extract(intent)
         setupSplashScreen().setKeepOnScreenCondition {
             authStep.value == null
         }
         enableEdgeToEdge()
         setContent {
             val navHostController = rememberNavController()
-
+            val openFilterCurrentAction = remember { mutableStateOf(openFilterAction) }
+            DisposableEffect(Unit) {
+                val listener = Consumer<Intent> {
+                    openFilterCurrentAction.value = NotificationActions.OpenFilterMessages.extract(it)
+                }
+                addOnNewIntentListener(listener)
+                onDispose { removeOnNewIntentListener(listener) }
+            }
             TelegramFilterAppTheme {
                 NavHost(
                     navHostController,
@@ -97,6 +111,11 @@ class MainActivity : ComponentActivity() {
                             ExitTransition.None
                         }
                     ) {
+                        LaunchedEffect(openFilterCurrentAction.value) {
+                            val filterId = openFilterCurrentAction.value?.filterId ?: return@LaunchedEffect
+                            navHostController.navigate(NavRoute.FilterMessages(filterId))
+                            openFilterCurrentAction.value = null
+                        }
                         FilterListScreen(
                             onNav = { navHostController.navigate(it) },
                             onLogout = {

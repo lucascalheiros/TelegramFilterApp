@@ -4,24 +4,23 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.NotificationManager.IMPORTANCE_DEFAULT
 import android.content.Context
-import com.github.lucascalheiros.domain.usecases.GetFilterUseCase
+import com.github.lucascalheiros.domain.model.Filter
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class ChannelSyncHelper @Inject constructor(
-    private val getFilterUseCase: GetFilterUseCase,
     @ApplicationContext private val context: Context
 ) {
 
-    suspend fun syncChannels() {
-        val channels = channelsForFilters()
+    fun syncChannels(filters: List<Filter>) {
+        val channels = channelsForFilters(filters)
         context.syncFilterChannels(channels)
     }
 
-    private suspend fun channelsForFilters(): List<ChannelType> {
-        return getFilterUseCase.getFilters().map { ChannelType.FilteredMessage(it) }
+    private fun channelsForFilters(filters: List<Filter>): List<ChannelType> {
+        return filters.map { ChannelType.FilteredMessage(it) }
     }
 
 }

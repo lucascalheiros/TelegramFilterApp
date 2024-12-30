@@ -27,7 +27,6 @@ class NotificationFilterHandler @Inject constructor(
     ) {
         CoroutineScope(ioDispatcher).launch(CoroutineExceptionHandler { _, error ->
             logError("Error while handling message: $messageTd", error)
-
         }) {
             val textContent = messageTd.content.textContent()
             val chatId = chatTd.id
