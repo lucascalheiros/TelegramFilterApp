@@ -31,19 +31,18 @@ import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.FilterSetti
 fun SelectedChatsOption(
     state: FilterSettingsUiState,
     onRemoveChat: (Long) -> Unit,
-    onSetSelectedChats: (List<Long>) -> Unit
+    onAddSelectedChats: (List<Long>) -> Unit
 ) {
     var showSelectChatsDialog by remember { mutableStateOf(false) }
     if (showSelectChatsDialog) {
-        SelectChatBottomSheet(
-            availableChats = state.availableChats,
-            selectedChats = state.selectedChats,
+        SelectChatDialog(
+            availableChats = state.chatsAvailableToSelect,
             onCancel = {
                 showSelectChatsDialog = false
             },
             onConfirm = {
                 showSelectChatsDialog = false
-                onSetSelectedChats(it)
+                onAddSelectedChats(it)
             }
         )
     }

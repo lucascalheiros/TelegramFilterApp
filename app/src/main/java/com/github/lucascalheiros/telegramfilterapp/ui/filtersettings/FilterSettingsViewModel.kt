@@ -10,6 +10,7 @@ import com.github.lucascalheiros.domain.usecases.GetChatsUseCase
 import com.github.lucascalheiros.domain.usecases.GetFilterUseCase
 import com.github.lucascalheiros.domain.usecases.SaveFilterUseCase
 import com.github.lucascalheiros.telegramfilterapp.navigation.NavRoute
+import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.helpers.GetDefaultFilterNameHelper
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.FilterSettingsAction
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.FilterSettingsReducer
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,14 +29,16 @@ class FilterSettingsViewModel @Inject constructor(
     private val reducer: FilterSettingsReducer,
     private val getFilterUseCase: GetFilterUseCase,
     private val saveFilterUseCase: SaveFilterUseCase,
-    private val getChatsUseCase: GetChatsUseCase
+    private val getChatsUseCase: GetChatsUseCase,
+    private val getDefaultFilterNameHelper: GetDefaultFilterNameHelper
 ) : ViewModel() {
 
     private val filterSettingsParam = savedStateHandle.toRoute<NavRoute.FilterSettings>()
     private val filterId: Long
         get() = filterSettingsParam.filterId ?: 0
 
-    private val _state = MutableStateFlow(FilterSettingsUiState())
+    private val _state =
+        MutableStateFlow(FilterSettingsUiState(filterTitle = getDefaultFilterNameHelper()))
     val state = _state.asStateFlow()
 
     private var watchChatsJob: Job? = null
@@ -50,10 +53,12 @@ class FilterSettingsViewModel @Inject constructor(
         return when (intent) {
             FilterSettingsIntent.LoadData -> loadData()
             FilterSettingsIntent.Save -> save()
-            is FilterSettingsIntent.UpdateTitle -> FilterSettingsAction.UpdateTitle(intent.title)
+            is FilterSettingsIntent.UpdateTitle -> FilterSettingsAction.UpdateTitle(intent.title.takeIf { it.isNotBlank() }
+                ?: getDefaultFilterNameHelper())
+
             is FilterSettingsIntent.AddQuery -> FilterSettingsAction.AddQuery(intent.text)
             is FilterSettingsIntent.RemoveQuery -> FilterSettingsAction.RemoveQuery(intent.index)
-            is FilterSettingsIntent.SetSelectedChats -> FilterSettingsAction.SetSelectedChats(intent.chatIds)
+            is FilterSettingsIntent.AddSelectedChats -> FilterSettingsAction.AddSelectedChats(intent.chatIds)
             is FilterSettingsIntent.RemoveChat -> FilterSettingsAction.RemoveChat(intent.chatId)
             is FilterSettingsIntent.SetFilterDateTime -> FilterSettingsAction.SetFilterDateTime(
                 intent.dateTime

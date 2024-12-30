@@ -64,4 +64,7 @@
     <string name="regex_supporting_text">Regex: %1$s</string>
     <string name="filters">Filters</string>
     <string name="you_have_no_filters_to_display_click_on_the_button_or_on_this_text_to_create_a_filter">You have no filters to display.\nClick on the \'+\' button or on this text to create a filter.</string>
+    <string name="new_filter">New filter</string>
+    <string name="add_chats">Add chats</string>
+    <string name="notification_settings">Notification Settings</string>
 </resources>

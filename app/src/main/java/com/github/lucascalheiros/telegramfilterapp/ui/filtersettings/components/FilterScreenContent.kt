@@ -96,7 +96,7 @@ fun FilterScreenContent(
                     SelectedChatsOption(
                         state,
                         { dispatch(FilterSettingsIntent.RemoveChat(it)) },
-                        { dispatch(FilterSettingsIntent.SetSelectedChats(it)) }
+                        { dispatch(FilterSettingsIntent.AddSelectedChats(it)) }
                     )
                 }
             }
@@ -109,9 +109,9 @@ fun FilterScreenContent(
 private fun FilterScreenContentPreview() {
     TelegramFilterAppTheme {
         FilterScreenContent(
-            FilterSettingsUiState(
-                filterTitle = "Nintendo Sports",
-                availableChats = listOf(ChatInfo(0, "Test", ChatType.Chat)),
+            state = FilterSettingsUiState(
+                filterTitle = stringResource(R.string.new_filter),
+                allAvailableChats = listOf(ChatInfo(0, "Test", ChatType.Chat)),
                 selectedChatIds = listOf(0)
             )
         ) {

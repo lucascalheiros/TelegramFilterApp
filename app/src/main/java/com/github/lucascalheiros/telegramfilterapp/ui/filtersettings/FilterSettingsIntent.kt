@@ -10,7 +10,7 @@ sealed interface FilterSettingsIntent {
     data object Save: FilterSettingsIntent
     data class AddQuery(val text: String): FilterSettingsIntent
     data class RemoveQuery(val index: Int): FilterSettingsIntent
-    data class SetSelectedChats(val chatIds: List<Long>): FilterSettingsIntent
+    data class AddSelectedChats(val chatIds: List<Long>): FilterSettingsIntent
     data class RemoveChat(val chatId: Long): FilterSettingsIntent
     data class SetFilterDateTime(val dateTime: LocalDateTime): FilterSettingsIntent
     data class SetFilterStrategy(val strategy: FilterStrategy): FilterSettingsIntent

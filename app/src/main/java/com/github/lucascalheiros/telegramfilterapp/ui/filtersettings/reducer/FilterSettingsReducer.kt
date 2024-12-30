@@ -8,7 +8,7 @@ import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.Fil
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.FilterSettingsAction.RemoveQuery
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.FilterSettingsAction.SetFilter
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.FilterSettingsAction.SetFilterDateTime
-import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.FilterSettingsAction.SetSelectedChats
+import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.FilterSettingsAction.AddSelectedChats
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.FilterSettingsAction.UpdateAvailableChats
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.FilterSettingsAction.UpdateTitle
 import com.github.lucascalheiros.common.datetime.millisToLocalDateTime
@@ -50,11 +50,11 @@ class FilterSettingsReducer @Inject constructor() :
             )
 
             is UpdateAvailableChats -> state.copy(
-                availableChats = action.chats
+                allAvailableChats = action.chats
             )
 
-            is SetSelectedChats -> state.copy(
-                selectedChatIds = action.chatIds,
+            is AddSelectedChats -> state.copy(
+                selectedChatIds = state.selectedChatIds + action.chatIds,
             )
 
             is RemoveChat -> state.copy(

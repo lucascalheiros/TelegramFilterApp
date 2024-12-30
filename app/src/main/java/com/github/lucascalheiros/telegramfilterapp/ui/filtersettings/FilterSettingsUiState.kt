@@ -10,17 +10,18 @@ data class FilterSettingsUiState(
     val strategy: FilterStrategy = FilterStrategy.TelegramQuerySearch,
     val queries: List<String> = listOf(),
     val regex: String = "",
-    val availableChats: List<ChatInfo> = listOf(),
+    val allAvailableChats: List<ChatInfo> = listOf(),
     val selectedChatIds: List<Long> = listOf(),
     val close: Boolean = false
 ) {
-    val isSaveEnabled: Boolean
-        get() {
-            return queries.isNotEmpty() && selectedChats.isNotEmpty()
-        }
 
     val selectedChats: List<ChatInfo> by lazy {
-        availableChats.filter { it.id in selectedChatIds }
+        allAvailableChats.filter { it.id in selectedChatIds }
     }
+
+    val chatsAvailableToSelect: List<ChatInfo> by lazy {
+        allAvailableChats.filter { it.id !in selectedChatIds }
+    }
+
 
 }

@@ -12,7 +12,7 @@ sealed interface FilterSettingsAction {
     data class AddQuery(val text: String): FilterSettingsAction
     data class RemoveQuery(val index: Int): FilterSettingsAction
     data class UpdateAvailableChats(val chats: List<ChatInfo>): FilterSettingsAction
-    data class SetSelectedChats(val chatIds: List<Long>): FilterSettingsAction
+    data class AddSelectedChats(val chatIds: List<Long>): FilterSettingsAction
     data class RemoveChat(val chatId: Long): FilterSettingsAction
     data class SetFilterDateTime(val dateTime: LocalDateTime): FilterSettingsAction
     data class SetFilterStrategy(val strategy: FilterStrategy): FilterSettingsAction
