@@ -1,5 +1,7 @@
 package com.github.lucascalheiros.telegramfilterapp.ui.filterlist.components
 
+import android.content.Intent
+import android.provider.Settings
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,13 +14,16 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.github.lucascalheiros.domain.model.Filter
 import com.github.lucascalheiros.domain.model.FilterStrategy
 import com.github.lucascalheiros.telegramfilterapp.R
+import com.github.lucascalheiros.telegramfilterapp.notification.channels.ChannelType
 import com.github.lucascalheiros.telegramfilterapp.ui.theme.TelegramFilterAppTheme
+
 
 @Composable
 fun FiltersList(
@@ -31,21 +36,27 @@ fun FiltersList(
         Modifier
             .fillMaxSize()
     ) {
-        itemsIndexed(filters, { _, info -> info.id }) { index, info ->
+        itemsIndexed(filters, { _, info -> info.id }) { index, filter ->
             ListItem(
                 modifier = Modifier.clickable {
-                    onOpenFilterMessages(info.id)
+                    onOpenFilterMessages(filter.id)
                 },
                 headlineContent = {
-                    Text(info.title)
+                    Text(filter.title)
                 },
                 supportingContent = {
-                    Text(info.queryOrRegexFilter())
+                    Text(filter.queryOrRegexFilter())
                 },
                 trailingContent = {
                     Row {
+                        IconButton(openNotificationChannelSetting(filter)) {
+                            Icon(
+                                painterResource(R.drawable.ic_notifications),
+                                stringResource(R.string.notification_settings)
+                            )
+                        }
                         IconButton({
-                            onOpenFilterSettings(info.id)
+                            onOpenFilterSettings(filter.id)
                         }) {
                             Icon(
                                 painterResource(R.drawable.ic_edit),
@@ -53,7 +64,7 @@ fun FiltersList(
                             )
                         }
                         IconButton({
-                            onDeleteFilter(info.id, info.title)
+                            onDeleteFilter(filter.id, filter.title)
                         }) {
                             Icon(
                                 painterResource(R.drawable.ic_delete),
@@ -67,6 +78,17 @@ fun FiltersList(
                 HorizontalDivider()
             }
         }
+    }
+}
+
+@Composable
+private fun openNotificationChannelSetting(filter: Filter): () -> Unit {
+    val context = LocalContext.current
+    return {
+        val intent = Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
+            .putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+            .putExtra(Settings.EXTRA_CHANNEL_ID, ChannelType.FilteredMessage(filter).channelId)
+        context.startActivity(intent)
     }
 }
 
