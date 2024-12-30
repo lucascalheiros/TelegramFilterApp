@@ -26,12 +26,11 @@ class MessageRepositoryImpl @Inject constructor(
     private suspend fun searchMessagesWithRegex(
         filter: Filter
     ): List<Message> = coroutineScope {
-        val regex = Regex(filter.regex)
         filter.chatIds.map {
             async { getMessagesFromChat(chatId = it, (filter.limitDate / 1000L).toInt()) }
         }.awaitAll().flatten().distinctBy { it.id }.mapNotNull { message ->
             val textContent = message.content.textContent()
-            val match = regex.containsMatchIn(textContent)
+            val match = filter.hasMatchInText(textContent)
             if (match) {
                 val chat = telegramClientWrapper.getChat(message.chatId)
                 Message(message.id, message.content.textContent(), message.date, chat?.title.orEmpty())

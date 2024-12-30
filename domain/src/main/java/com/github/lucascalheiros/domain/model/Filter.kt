@@ -11,4 +11,11 @@ data class Filter(
     val chatIds: List<Long>,
     val limitDate: Long,
     val strategy: FilterStrategy
-)
+) {
+    fun hasMatchInText(text: String): Boolean {
+        return when (strategy) {
+            FilterStrategy.TelegramQuerySearch -> queries.any { text.contains(it, ignoreCase = true) }
+            FilterStrategy.LocalRegexSearch -> Regex(regex).containsMatchIn(text)
+        }
+    }
+}

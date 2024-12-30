@@ -22,7 +22,7 @@ class FilteredNotificationEmitterImpl @Inject constructor(
         val firstFilter = filters.first()
 
         val notification = Notification.Builder(context, ChannelType.FilteredMessage(firstFilter).channelId)
-            .setSmallIcon(R.drawable.ic_filter_list)
+            .setSmallIcon(R.drawable.app_icon_white)
             .setContentTitle(firstFilter.title)
             .setContentText(message.content)
             .build()

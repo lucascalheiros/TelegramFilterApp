@@ -49,10 +49,12 @@ class NotificationFilterHandler @Inject constructor(
         textToFilter: String,
         chatId: Long
     ): List<Filter> {
-        return filterRepository.getFilters().filter { it ->
+        return filterRepository.getFilters().filter {
             val isFromMonitoredChat = (chatId in it.chatIds)
-            val hasQueryText = it.queries.any { textToFilter.contains(it, ignoreCase = true) }
-            isFromMonitoredChat && hasQueryText
+            if (!isFromMonitoredChat) {
+                return@filter false
+            }
+            it.hasMatchInText(textToFilter)
         }
     }
 
