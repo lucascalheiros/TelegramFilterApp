@@ -1,4 +1,4 @@
-package com.github.lucascalheiros.telegramfilterapp.ui
+package com.github.lucascalheiros.telegramfilterapp.ui.base
 
 /**
  * The reduces will be responsible to hold the state change logic and to perform this logic defined

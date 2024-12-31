@@ -23,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.github.lucascalheiros.common.datetime.secondsToLocalDateTime
 import com.github.lucascalheiros.telegramfilterapp.R
+import com.github.lucascalheiros.telegramfilterapp.ui.components.linkify
 import com.github.lucascalheiros.telegramfilterapp.ui.filtermessages.FilterMessagesUiState
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle

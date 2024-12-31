@@ -31,7 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.github.lucascalheiros.domain.model.FilterStrategy
 import com.github.lucascalheiros.telegramfilterapp.R
-import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.components.SettingItem
+import com.github.lucascalheiros.telegramfilterapp.ui.components.SettingItem
 
 @Composable
 fun FilterStrategyOption(strategy: FilterStrategy, onSelectStrategy: (FilterStrategy) -> Unit) {

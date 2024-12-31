@@ -1,6 +1,6 @@
 package com.github.lucascalheiros.telegramfilterapp.ui.filterlist.reducer
 
-import com.github.lucascalheiros.telegramfilterapp.ui.Reducer
+import com.github.lucascalheiros.telegramfilterapp.ui.base.Reducer
 import com.github.lucascalheiros.telegramfilterapp.ui.filterlist.FilterListUiState
 import com.github.lucascalheiros.telegramfilterapp.ui.filterlist.FilterState
 import com.github.lucascalheiros.telegramfilterapp.ui.filterlist.LogoutState

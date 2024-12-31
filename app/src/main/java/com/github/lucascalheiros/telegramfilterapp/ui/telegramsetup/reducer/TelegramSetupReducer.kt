@@ -1,10 +1,11 @@
 package com.github.lucascalheiros.telegramfilterapp.ui.telegramsetup.reducer
 
-import com.github.lucascalheiros.telegramfilterapp.ui.Reducer
+import com.github.lucascalheiros.telegramfilterapp.ui.base.Reducer
 import com.github.lucascalheiros.telegramfilterapp.ui.telegramsetup.TelegramSetupUiState
 import javax.inject.Inject
 
-class TelegramSetupReducer @Inject constructor(): Reducer<TelegramSetupUiState, TelegramSetupAction> {
+class TelegramSetupReducer @Inject constructor():
+    Reducer<TelegramSetupUiState, TelegramSetupAction> {
     override fun reduce(
         state: TelegramSetupUiState,
         action: TelegramSetupAction

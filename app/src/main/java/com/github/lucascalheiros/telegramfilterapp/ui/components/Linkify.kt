@@ -1,4 +1,4 @@
-package com.github.lucascalheiros.telegramfilterapp.ui.filtermessages.components
+package com.github.lucascalheiros.telegramfilterapp.ui.components
 
 import android.text.SpannableString
 import android.text.style.URLSpan

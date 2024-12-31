@@ -2,6 +2,7 @@ package com.github.lucascalheiros.telegramfilterapp.ui.filterlist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.lucascalheiros.analytics.reporter.AnalyticsReporter
 import com.github.lucascalheiros.common.log.logError
 import com.github.lucascalheiros.domain.usecases.DeleteFilterUseCase
 import com.github.lucascalheiros.domain.usecases.GetFilterUseCase
@@ -11,6 +12,7 @@ import com.github.lucascalheiros.telegramfilterapp.ui.filterlist.reducer.FilterL
 import com.github.lucascalheiros.telegramfilterapp.ui.filterlist.reducer.FilterLoadAction
 import com.github.lucascalheiros.telegramfilterapp.ui.filterlist.reducer.LogoutAction
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -24,7 +26,8 @@ class FilterListViewModel @Inject constructor(
     private val getFilterUseCase: GetFilterUseCase,
     private val reducer: FilterListReducer,
     private val deleteFilterUseCase: DeleteFilterUseCase,
-    private val logoutUseCase: LogoutUseCase
+    private val logoutUseCase: LogoutUseCase,
+    private val analyticsReporter: AnalyticsReporter
 ): ViewModel() {
 
     private val _state = MutableStateFlow(FilterListUiState())
@@ -34,18 +37,20 @@ class FilterListViewModel @Inject constructor(
     val event = _event.asSharedFlow()
 
     fun dispatch(intent: FilterListIntent) {
-        viewModelScope.launch {
-            intentHandleMiddleware(intent).run(::reduceAction)
+        viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
+            analyticsReporter.addNonFatalReport(throwable)
+        }) {
+            intentHandleMiddleware(intent)
         }
     }
 
-    private suspend fun intentHandleMiddleware(intent: FilterListIntent): FilterListAction {
-        return when (intent) {
-            FilterListIntent.LoadData -> handleLoadData()
+    private suspend fun intentHandleMiddleware(intent: FilterListIntent) {
+        when (intent) {
+            FilterListIntent.LoadData -> loadData()
 
-            is FilterListIntent.DeleteFilter -> handle(intent)
+            is FilterListIntent.DeleteFilter -> delete(intent.filterId, intent.filterName)
 
-            FilterListIntent.Logout -> handleLogout()
+            FilterListIntent.Logout -> logout()
         }
     }
 
@@ -59,36 +64,39 @@ class FilterListViewModel @Inject constructor(
         _event.emit(event)
     }
 
-    private suspend fun handleLoadData(): FilterListAction {
+    private suspend fun loadData() {
         return try {
             reduceAction(FilterLoadAction.Loading)
             val filters = getFilterUseCase.getFilters()
-            FilterLoadAction.Success(filters)
+            reduceAction(FilterLoadAction.Success(filters))
         } catch (e: Exception) {
             logError("::handleLoadData", e)
-            FilterLoadAction.Failure
+            analyticsReporter.addNonFatalReport(e)
+            reduceAction(FilterLoadAction.Failure)
         }
     }
 
-    private suspend fun handle(intent: FilterListIntent.DeleteFilter): FilterListAction {
+    private suspend fun delete(filterId: Long, filterName: String) {
         val event = try {
-            deleteFilterUseCase(intent.filterId)
-            FilterListUiEvent.DeleteFilter.Success(intent.filterName)
+            deleteFilterUseCase(filterId)
+            FilterListUiEvent.DeleteFilter.Success(filterName)
         } catch (e: Exception) {
-            FilterListUiEvent.DeleteFilter.Failure(intent.filterName)
+            FilterListUiEvent.DeleteFilter.Failure(filterName)
         }
         sendEvent(event)
-        return handleLoadData()
+        loadData()
     }
 
-    private suspend fun handleLogout(): FilterListAction {
+    private suspend fun logout() {
         reduceAction(LogoutAction.Loading)
-        return try {
+        val resultAction = try {
             logoutUseCase()
             LogoutAction.Success
         } catch (e: Exception) {
             logError("::handleLogout", e)
+            analyticsReporter.addNonFatalReport(e)
             LogoutAction.Failure
         }
+        reduceAction(resultAction)
     }
 }

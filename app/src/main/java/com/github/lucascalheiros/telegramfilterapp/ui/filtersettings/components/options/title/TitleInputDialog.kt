@@ -11,7 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import com.github.lucascalheiros.telegramfilterapp.R
-import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.components.BaseDialog
+import com.github.lucascalheiros.telegramfilterapp.ui.components.BaseDialog
 
 @Composable
 fun TitleInputDialog(

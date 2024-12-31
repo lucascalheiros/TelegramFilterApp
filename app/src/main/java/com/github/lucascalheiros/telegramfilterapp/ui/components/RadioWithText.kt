@@ -1,4 +1,4 @@
-package com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.components
+package com.github.lucascalheiros.telegramfilterapp.ui.components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding

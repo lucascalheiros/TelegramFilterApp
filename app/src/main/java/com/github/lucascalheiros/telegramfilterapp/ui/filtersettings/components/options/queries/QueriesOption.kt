@@ -13,7 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import com.github.lucascalheiros.telegramfilterapp.R
-import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.components.SettingItem
+import com.github.lucascalheiros.telegramfilterapp.ui.components.SettingItem
 
 @Composable
 fun QueriesOption(

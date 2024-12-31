@@ -1,6 +1,6 @@
 package com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer
 
-import com.github.lucascalheiros.telegramfilterapp.ui.Reducer
+import com.github.lucascalheiros.telegramfilterapp.ui.base.Reducer
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.FilterSettingsUiState
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.FilterSettingsAction.AddQuery
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.FilterSettingsAction.Close

@@ -22,6 +22,7 @@ import com.github.lucascalheiros.domain.model.ChatInfo
 import com.github.lucascalheiros.domain.model.ChatType
 import com.github.lucascalheiros.domain.model.FilterStrategy
 import com.github.lucascalheiros.telegramfilterapp.R
+import com.github.lucascalheiros.telegramfilterapp.ui.components.SettingItem
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.FilterSettingsIntent
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.FilterSettingsUiState
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.components.options.filterdatetime.FilterDateTimeOption

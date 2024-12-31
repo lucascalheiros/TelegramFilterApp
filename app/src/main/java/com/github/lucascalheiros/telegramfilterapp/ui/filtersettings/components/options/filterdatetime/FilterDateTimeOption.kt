@@ -18,7 +18,7 @@ import androidx.compose.ui.res.stringResource
 import com.github.lucascalheiros.common.datetime.millisToLocalDate
 import com.github.lucascalheiros.common.datetime.toMillis
 import com.github.lucascalheiros.telegramfilterapp.R
-import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.components.SettingItem
+import com.github.lucascalheiros.telegramfilterapp.ui.components.SettingItem
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter

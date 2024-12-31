@@ -4,12 +4,14 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.github.lucascalheiros.analytics.reporter.AnalyticsReporter
 import com.github.lucascalheiros.domain.usecases.GetFilterUseCase
 import com.github.lucascalheiros.domain.usecases.GetMessagesUseCase
 import com.github.lucascalheiros.telegramfilterapp.navigation.NavRoute
 import com.github.lucascalheiros.telegramfilterapp.ui.filtermessages.reducer.FilterMessagesAction
 import com.github.lucascalheiros.telegramfilterapp.ui.filtermessages.reducer.FilterMessagesReducer
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -21,7 +23,8 @@ class FilterMessagesViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val reducer: FilterMessagesReducer,
     private val getMessagesUseCase: GetMessagesUseCase,
-    private val getFilterUseCase: GetFilterUseCase
+    private val getFilterUseCase: GetFilterUseCase,
+    private val analyticsReporter: AnalyticsReporter,
 ) : ViewModel() {
 
     private val filterSettingsParam = savedStateHandle.toRoute<NavRoute.FilterSettings>()
@@ -32,19 +35,16 @@ class FilterMessagesViewModel @Inject constructor(
     val state = _state.asStateFlow()
 
     fun dispatch(intent: FilterMessagesIntent) {
-        viewModelScope.launch {
-            intentHandleMiddleware(intent)?.run(::reduceAction)
+        viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
+            analyticsReporter.addNonFatalReport(throwable)
+        }) {
+            intentHandleMiddleware(intent)
         }
     }
 
-    private suspend fun intentHandleMiddleware(intent: FilterMessagesIntent): FilterMessagesAction? {
-        return when (intent) {
-            FilterMessagesIntent.LoadData -> {
-                reduceAction(FilterMessagesAction.LoadingMessage)
-                val filter = getFilterUseCase.getFilter(filterId) ?: return null
-                val messages = getMessagesUseCase(filter)
-                FilterMessagesAction.SetMessages(messages)
-            }
+    private suspend fun intentHandleMiddleware(intent: FilterMessagesIntent) {
+        when (intent) {
+            FilterMessagesIntent.LoadData -> loadData()
         }
     }
 
@@ -52,5 +52,12 @@ class FilterMessagesViewModel @Inject constructor(
         _state.update {
             reducer.reduce(it, action)
         }
+    }
+
+    private suspend fun loadData() {
+        reduceAction(FilterMessagesAction.LoadingMessage)
+        val filter = getFilterUseCase.getFilter(filterId) ?: return
+        val messages = getMessagesUseCase(filter)
+        reduceAction(FilterMessagesAction.SetMessages(messages))
     }
 }
