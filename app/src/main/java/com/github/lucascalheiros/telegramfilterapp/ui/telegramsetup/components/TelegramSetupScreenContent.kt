@@ -13,14 +13,18 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.github.lucascalheiros.domain.model.AuthorizationStep
 import com.github.lucascalheiros.telegramfilterapp.R
 import com.github.lucascalheiros.telegramfilterapp.ui.telegramsetup.TelegramSetupIntent
 import com.github.lucascalheiros.telegramfilterapp.ui.telegramsetup.TelegramSetupUiState
@@ -29,23 +33,19 @@ import com.github.lucascalheiros.telegramfilterapp.ui.telegramsetup.TelegramSetu
 @Composable
 fun TelegramSetupScreenContent(
     state: TelegramSetupUiState,
+    snackbarHostState: SnackbarHostState,
     send: (TelegramSetupIntent) -> Unit
 ) {
     Scaffold(
         modifier = Modifier.imePadding(),
         topBar = {
-            TopAppBar(
-                {
-                    Text(stringResource(R.string.telegram_account_setup))
-                }
-            )
+            TopAppBar({ Text(stringResource(R.string.telegram_account_setup)) })
         },
         floatingActionButton = {
             if (!state.isStepLoading) {
                 FloatingActionButton(
-                    {
-                        send(TelegramSetupIntent.NextStep)
-                    },
+                    onClick = { send(TelegramSetupIntent.NextStep) },
+                    modifier = Modifier.alpha(if (state.isActionEnabled) 1f else 0.4f)
                 ) {
                     Icon(
                         painterResource(R.drawable.ic_arrow_forward),
@@ -53,6 +53,9 @@ fun TelegramSetupScreenContent(
                     )
                 }
             }
+        },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
         }
     ) { innerPadding ->
         Column(
@@ -70,23 +73,28 @@ fun TelegramSetupScreenContent(
                 )
             }
             AnimatedVisibility(state.isPhoneInputVisible) {
-                PhoneNumberInput(state.phoneNumber, state.areaCode, {
-                    send(TelegramSetupIntent.UpdatePhoneNumber(it))
-
-                }, {
-                    send(TelegramSetupIntent.UpdateAreaCode(it))
-
-                })
+                PhoneNumberInput(
+                    number = state.phoneNumber,
+                    region = state.displayCountry,
+                    onChangeNumber = { send(TelegramSetupIntent.UpdatePhoneNumber(it)) }
+                )
             }
             AnimatedVisibility(state.isCodeInputVisible) {
-                CodeInput(state.code) {
-                    send(TelegramSetupIntent.UpdateCode(it))
+                if (state.step is AuthorizationStep.CodeInput) {
+                    CodeInput(
+                        value = state.code,
+                        step = state.step,
+                        onChangeNumber = { send(TelegramSetupIntent.ChangeNumber) },
+                        onChange = { send(TelegramSetupIntent.UpdateCode(it)) }
+                    )
                 }
             }
             AnimatedVisibility(state.isPasswordInputVisible) {
-                PasswordInputInput(state.password) {
-                    send(TelegramSetupIntent.UpdatePassword(it))
-                }
+                PasswordInputInput(
+                    value = state.password,
+                    onCancelSetup = { send(TelegramSetupIntent.CancelSetup) },
+                    onChange = { send(TelegramSetupIntent.UpdatePassword(it)) }
+                )
             }
         }
     }

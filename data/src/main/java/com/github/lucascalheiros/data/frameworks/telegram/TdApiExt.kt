@@ -12,13 +12,19 @@ suspend fun <T : TdApi.Object> Client.send(query: TdApi.Function<T>): T =
         send(
             query,
             {
-                continuation.resume(it as T)
+                if (it is TdApi.Error) {
+                    continuation.resumeWithException(TdLibError(it))
+                } else {
+                    continuation.resume(it as T)
+                }
             },
             {
                 continuation.resumeWithException(it)
             }
         )
     }
+
+class TdLibError(error: TdApi.Error): Exception(error.toString())
 
 fun TdApi.MessageContent.textContent(): String {
     return when (this) {

@@ -17,6 +17,7 @@ import org.drinkless.tdlib.TdApi.RegisterDevice
 import javax.inject.Inject
 import javax.inject.Singleton
 import com.github.lucascalheiros.common.log.logDebug
+import com.github.lucascalheiros.common.log.logError
 import com.github.lucascalheiros.data.notification.NotificationFilterHandler
 
 @Singleton
@@ -55,10 +56,10 @@ class TelegramClientWrapper @Inject constructor(
                 }
             },
             {
-                logDebug("updateExceptionHandler", it)
+                logError("updateExceptionHandler", it)
             },
             {
-                logDebug("defaultExceptionHandler", it)
+                logError("defaultExceptionHandler", it)
             }
         )
     }

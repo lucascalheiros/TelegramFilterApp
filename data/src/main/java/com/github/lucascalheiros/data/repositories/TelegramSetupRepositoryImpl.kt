@@ -20,9 +20,9 @@ class TelegramSetupRepositoryImpl @Inject constructor(
     override fun authorizationStep(): Flow<AuthorizationStep?> {
         return telegramClientWrapper.currentAuthState.map { tdState ->
             if (tdState is UpdateAuthorizationState) {
-                when (tdState.authorizationState) {
+                when (val state = tdState.authorizationState) {
                     is AuthorizationStateWaitPhoneNumber -> AuthorizationStep.PhoneInput
-                    is AuthorizationStateWaitCode -> AuthorizationStep.CodeInput
+                    is AuthorizationStateWaitCode -> AuthorizationStep.CodeInput(state.codeInfo.phoneNumber)
                     is AuthorizationStateWaitPassword -> AuthorizationStep.PasswordInput
                     is AuthorizationStateReady -> AuthorizationStep.Ready
                     else -> null

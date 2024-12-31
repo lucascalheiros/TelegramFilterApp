@@ -67,4 +67,15 @@
     <string name="new_filter">New filter</string>
     <string name="add_chats">Add chats</string>
     <string name="notification_settings">Notification Settings</string>
+    <string name="please_input_your_telegram_s_existing_account_phone_number">Please input your telegram\'s existing account phone number:</string>
+    <string name="login_confirmation_code_sent_to">Login confirmation code was sent to +%1$s\n</string>
+    <string name="change_number">change number</string>
+    <string name="wrong_auth_code">Wrong auth code</string>
+    <string name="wrong_password">Wrong password</string>
+    <string name="error_on_phone_number_send">Error on phone number send</string>
+    <string name="click_here_to_change_number">Click here to change number</string>
+    <string name="region">Region: %1$s</string>
+    <string name="data_loading_failed">Data loading failed</string>
+    <string name="cancel_setup">Cancel setup</string>
+    <string name="click_here_to_cancel_the_setup">Click here to cancel the setup</string>
 </resources>
