@@ -17,5 +17,4 @@ sealed interface FilterSettingsAction {
     data class SetFilterDateTime(val dateTime: LocalDateTime): FilterSettingsAction
     data class SetFilterStrategy(val strategy: FilterStrategy): FilterSettingsAction
     data class UpdateRegex(val regex: String): FilterSettingsAction
-
 }

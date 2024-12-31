@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.github.lucascalheiros.analytics.reporter.AnalyticsReporter
 import com.github.lucascalheiros.common.datetime.toMillis
 import com.github.lucascalheiros.domain.model.Filter
 import com.github.lucascalheiros.domain.usecases.GetChatsUseCase
@@ -14,9 +15,12 @@ import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.helpers.Get
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.FilterSettingsAction
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.FilterSettingsReducer
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
@@ -30,7 +34,8 @@ class FilterSettingsViewModel @Inject constructor(
     private val getFilterUseCase: GetFilterUseCase,
     private val saveFilterUseCase: SaveFilterUseCase,
     private val getChatsUseCase: GetChatsUseCase,
-    private val getDefaultFilterNameHelper: GetDefaultFilterNameHelper
+    private val getDefaultFilterNameHelper: GetDefaultFilterNameHelper,
+    private val analyticsReporter: AnalyticsReporter,
 ) : ViewModel() {
 
     private val filterSettingsParam = savedStateHandle.toRoute<NavRoute.FilterSettings>()
@@ -41,34 +46,54 @@ class FilterSettingsViewModel @Inject constructor(
         MutableStateFlow(FilterSettingsUiState(filterTitle = getDefaultFilterNameHelper()))
     val state = _state.asStateFlow()
 
+    private val _events = MutableSharedFlow<FilterSettingsUiEvent>()
+    val events = _events.asSharedFlow()
+
     private var watchChatsJob: Job? = null
 
     fun dispatch(intent: FilterSettingsIntent) {
-        viewModelScope.launch {
-            intentHandleMiddleware(intent)?.run(::reduceAction)
+        viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
+            analyticsReporter.addNonFatalReport(throwable)
+        }) {
+            intentHandleMiddleware(intent)
         }
     }
 
-    private suspend fun intentHandleMiddleware(intent: FilterSettingsIntent): FilterSettingsAction? {
-        return when (intent) {
+    private suspend fun sendUiEvent(event: FilterSettingsUiEvent) {
+        _events.emit(event)
+    }
+
+    private suspend fun intentHandleMiddleware(intent: FilterSettingsIntent) {
+        val possibleAction: Any = when (intent) {
             FilterSettingsIntent.LoadData -> loadData()
             FilterSettingsIntent.Save -> save()
-            is FilterSettingsIntent.UpdateTitle -> FilterSettingsAction.UpdateTitle(intent.title.takeIf { it.isNotBlank() }
-                ?: getDefaultFilterNameHelper())
+            is FilterSettingsIntent.UpdateTitle ->
+                FilterSettingsAction.UpdateTitle(intent.title.takeIf { it.isNotBlank() }
+                    ?: getDefaultFilterNameHelper())
 
-            is FilterSettingsIntent.AddQuery -> FilterSettingsAction.AddQuery(intent.text)
-            is FilterSettingsIntent.RemoveQuery -> FilterSettingsAction.RemoveQuery(intent.index)
-            is FilterSettingsIntent.AddSelectedChats -> FilterSettingsAction.AddSelectedChats(intent.chatIds)
-            is FilterSettingsIntent.RemoveChat -> FilterSettingsAction.RemoveChat(intent.chatId)
-            is FilterSettingsIntent.SetFilterDateTime -> FilterSettingsAction.SetFilterDateTime(
-                intent.dateTime
-            )
+            is FilterSettingsIntent.AddQuery ->
+                FilterSettingsAction.AddQuery(intent.text)
 
-            is FilterSettingsIntent.SetFilterStrategy -> FilterSettingsAction.SetFilterStrategy(
-                intent.strategy
-            )
+            is FilterSettingsIntent.RemoveQuery ->
+                FilterSettingsAction.RemoveQuery(intent.index)
 
-            is FilterSettingsIntent.UpdateRegex -> FilterSettingsAction.UpdateRegex(intent.regex)
+            is FilterSettingsIntent.AddSelectedChats ->
+                FilterSettingsAction.AddSelectedChats(intent.chatIds)
+
+            is FilterSettingsIntent.RemoveChat ->
+                FilterSettingsAction.RemoveChat(intent.chatId)
+
+            is FilterSettingsIntent.SetFilterDateTime ->
+                FilterSettingsAction.SetFilterDateTime(intent.dateTime)
+
+            is FilterSettingsIntent.SetFilterStrategy ->
+                FilterSettingsAction.SetFilterStrategy(intent.strategy)
+
+            is FilterSettingsIntent.UpdateRegex ->
+                FilterSettingsAction.UpdateRegex(intent.regex)
+        }
+        if (possibleAction is FilterSettingsAction) {
+            reduceAction(possibleAction)
         }
     }
 
@@ -83,7 +108,7 @@ class FilterSettingsViewModel @Inject constructor(
         return getFilterUseCase.getFilter(filterId)
     }
 
-    private suspend fun save(): FilterSettingsAction? {
+    private suspend fun save() {
         return try {
             val state = state.value
             saveFilterUseCase(
@@ -97,9 +122,9 @@ class FilterSettingsViewModel @Inject constructor(
                     strategy = state.strategy
                 )
             )
-            FilterSettingsAction.Close
+            reduceAction(FilterSettingsAction.Close)
         } catch (e: Exception) {
-            null
+            analyticsReporter.addNonFatalReport(e)
         }
     }
 
@@ -109,17 +134,24 @@ class FilterSettingsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun loadData(): FilterSettingsAction? {
+    private suspend fun loadData() {
         return try {
-            getChatsUseCase.update()
-            if (watchChatsJob?.isActive != true) {
-                watchChatsJob = viewModelScope.watchChatUpdate()
-            }
-
-            val filter = loadFilter() ?: return null
-            FilterSettingsAction.SetFilter(filter)
+            watchAndLoadChats()
+            val filter = loadFilter() ?: return
+            reduceAction(FilterSettingsAction.SetFilter(filter))
         } catch (e: Exception) {
-            null
+            sendUiEvent(FilterSettingsUiEvent.DataLoadingFailed)
+            reduceAction(FilterSettingsAction.Close)
+        }
+    }
+
+    private fun watchAndLoadChats() = viewModelScope.launch {
+        if (watchChatsJob?.isActive != true) {
+            watchChatsJob = viewModelScope.watchChatUpdate()
+        }
+        try {
+            getChatsUseCase.update()
+        } catch (_: Exception) {
         }
     }
 }

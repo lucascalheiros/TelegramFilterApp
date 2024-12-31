@@ -86,7 +86,6 @@ fun FilterScreenContent(
                 }
                 HorizontalDivider()
                 Column {
-                    HorizontalDivider()
                     SettingItem(stringResource(R.string.selected_sources)) {
                         Text(
                             state.selectedChatIds.size.toString(),
