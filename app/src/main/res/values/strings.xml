@@ -78,4 +78,5 @@
     <string name="data_loading_failed">Data loading failed</string>
     <string name="cancel_setup">Cancel setup</string>
     <string name="click_here_to_cancel_the_setup">Click here to cancel the setup</string>
+    <string name="the_current_filters_will_be_deleted_on_logout_to_proceed_press_yes">The current filters will be deleted on logout.</string>
 </resources>
