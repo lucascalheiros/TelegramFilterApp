@@ -23,13 +23,14 @@ fun BaseDialog(
     title: @Composable () -> Unit,
     content: @Composable ColumnScope.() -> Unit,
     actions: @Composable RowScope.() -> Unit,
-    onDismissRequest: () -> Unit
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Dialog(
         onDismissRequest = onDismissRequest
     ) {
         Card(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth(),
             shape = RoundedCornerShape(28.dp),
         ) {

@@ -42,6 +42,7 @@ dependencies {
     implementation(project(":tdlib"))
     implementation(project(":domain"))
     implementation(project(":common"))
+    implementation(project(":analytics"))
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
