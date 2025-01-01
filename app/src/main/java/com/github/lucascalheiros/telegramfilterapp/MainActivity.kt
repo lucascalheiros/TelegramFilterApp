@@ -13,11 +13,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.util.Consumer
 import androidx.navigation.compose.NavHost
@@ -45,7 +48,13 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var getAuthorizationStepUseCase: GetAuthorizationStepUseCase
 
-    private val authStep by lazy { getAuthorizationStepUseCase().stateIn(MainScope(), SharingStarted.Eagerly, null) }
+    private val authStep by lazy {
+        getAuthorizationStepUseCase().stateIn(
+            MainScope(),
+            SharingStarted.Eagerly,
+            null
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,38 +65,35 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val navHostController = rememberNavController()
-            val openFilterCurrentAction = remember { mutableStateOf(openFilterAction) }
-            DisposableEffect(Unit) {
-                val listener = Consumer<Intent> {
-                    openFilterCurrentAction.value = NotificationActions.OpenFilterMessages.extract(it)
+            var openFilterCurrentAction by remember { mutableStateOf(openFilterAction) }
+            var startDestination by remember { mutableStateOf<NavRoute?>(null) }
+            OnStartDestinationLoaded {
+                startDestination = it
+            }
+            OnNewNotificationActions {
+                if (it is NotificationActions.OpenFilterMessages) {
+                    openFilterCurrentAction = it
                 }
-                addOnNewIntentListener(listener)
-                onDispose { removeOnNewIntentListener(listener) }
+            }
+            LaunchedEffect(openFilterCurrentAction, startDestination) {
+                val currentAction = openFilterCurrentAction ?: return@LaunchedEffect
+                val nonMutableStartDestination = startDestination ?: return@LaunchedEffect
+                if (nonMutableStartDestination == NavRoute.Setup) {
+                    return@LaunchedEffect
+                }
+                navHostController.navigate(NavRoute.FilterMessages(currentAction.filterId))
+                openFilterCurrentAction = null
             }
             TelegramFilterAppTheme {
+                val nonMutableStartDestination = startDestination
+                if (nonMutableStartDestination == null) {
+                    TemporaryEmptyScreen()
+                    return@TelegramFilterAppTheme
+                }
                 NavHost(
                     navHostController,
-                    NavRoute.Redirect
+                    nonMutableStartDestination
                 ) {
-                    composable<NavRoute.Redirect> {
-                        val step = authStep.collectAsState().value
-                        LaunchedEffect(step) {
-                            if (step == null) {
-                                return@LaunchedEffect
-                            }
-                            val target: Any = if (step == AuthorizationStep.Ready) {
-                                NavRoute.FilterList
-                            } else {
-                                NavRoute.Setup
-                            }
-                            navHostController.navigate(target) {
-                                popUpTo(NavRoute.Redirect) {
-                                    inclusive = true
-                                }
-                            }
-                        }
-                        Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {}
-                    }
                     composable<NavRoute.Setup> {
                         TelegramSetupScreen {
                             navHostController.navigate(NavRoute.FilterList) {
@@ -111,13 +117,8 @@ class MainActivity : ComponentActivity() {
                             ExitTransition.None
                         }
                     ) {
-                        LaunchedEffect(openFilterCurrentAction.value) {
-                            val filterId = openFilterCurrentAction.value?.filterId ?: return@LaunchedEffect
-                            navHostController.navigate(NavRoute.FilterMessages(filterId))
-                            openFilterCurrentAction.value = null
-                        }
                         FilterListScreen(
-                            onNav = { navHostController.navigate(it) },
+                            onNav = navHostController::navigate,
                             onLogout = {
                                 navHostController.navigate(NavRoute.Setup) {
                                     popUpTo<NavRoute.FilterList> {
@@ -150,9 +151,9 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                     ) {
-                        FilterSettingsScreen {
-                            navHostController.navigateUp()
-                        }
+                        FilterSettingsScreen(
+                            onBackPressed = navHostController::navigateUp
+                        )
                     }
                     composable<NavRoute.FilterMessages>(
                         enterTransition = {
@@ -177,12 +178,48 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                     ) {
-                        FilterMessagesScreen {
-                            navHostController.navigateUp()
-                        }
+                        FilterMessagesScreen(
+                            onBackPressed = navHostController::navigateUp,
+                            onNav = navHostController::navigate,
+                        )
                     }
                 }
             }
         }
     }
+
+    @Composable
+    private fun OnStartDestinationLoaded(onStartDestination: (NavRoute) -> Unit) {
+        val step by authStep.collectAsState()
+        LaunchedEffect(step) {
+            if (step == null) {
+                return@LaunchedEffect
+            }
+            if (step == AuthorizationStep.Ready) {
+                NavRoute.FilterList
+            } else {
+                NavRoute.Setup
+            }.run(onStartDestination)
+        }
+    }
+
+    @Composable
+    private fun OnNewNotificationActions(onNotificationActions: (NotificationActions) -> Unit) {
+        DisposableEffect(Unit) {
+            val listener = Consumer<Intent> {
+                NotificationActions.OpenFilterMessages.extract(it)?.run(onNotificationActions)
+            }
+            addOnNewIntentListener(listener)
+            onDispose { removeOnNewIntentListener(listener) }
+        }
+    }
+}
+
+@Composable
+private fun TemporaryEmptyScreen() {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {}
 }

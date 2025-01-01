@@ -5,9 +5,6 @@ import kotlinx.serialization.Serializable
 sealed interface NavRoute {
 
     @Serializable
-    data object Redirect : NavRoute
-
-    @Serializable
     data object Setup : NavRoute
 
     @Serializable
