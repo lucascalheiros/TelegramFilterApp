@@ -13,7 +13,7 @@ suspend fun <T : TdApi.Object> Client.send(query: TdApi.Function<T>): T =
             query,
             {
                 if (it is TdApi.Error) {
-                    continuation.resumeWithException(TdLibError(it))
+                    continuation.resumeWithException(TdLibError(query, it))
                 } else {
                     continuation.resume(it as T)
                 }
@@ -24,7 +24,7 @@ suspend fun <T : TdApi.Object> Client.send(query: TdApi.Function<T>): T =
         )
     }
 
-class TdLibError(error: TdApi.Error): Exception(error.toString())
+class TdLibError(query: TdApi.Function<*>, error: TdApi.Error): Exception("$query\n$error")
 
 fun TdApi.MessageContent.textContent(): String {
     return when (this) {

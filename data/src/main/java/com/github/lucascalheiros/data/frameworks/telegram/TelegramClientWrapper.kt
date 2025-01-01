@@ -1,6 +1,7 @@
 package com.github.lucascalheiros.data.frameworks.telegram
 
 import android.content.Context
+import com.github.lucascalheiros.analytics.reporter.AnalyticsReporter
 import com.github.lucascalheiros.common.di.IoDispatcher
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -19,12 +20,14 @@ import javax.inject.Singleton
 import com.github.lucascalheiros.common.log.logDebug
 import com.github.lucascalheiros.common.log.logError
 import com.github.lucascalheiros.data.notification.NotificationFilterHandler
+import kotlinx.coroutines.CoroutineExceptionHandler
 
 @Singleton
 class TelegramClientWrapper @Inject constructor(
     @ApplicationContext private val context: Context,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    private val notificationFilterHandler: NotificationFilterHandler
+    private val notificationFilterHandler: NotificationFilterHandler,
+    private val analyticsReporter: AnalyticsReporter
 ) {
 
     private var telegramClient: Client? = null
@@ -71,15 +74,38 @@ class TelegramClientWrapper @Inject constructor(
         return telegramClient!!.send(query)
     }
 
+    fun onNewToken(token: String) {
+        setup()
+        CoroutineScope(ioDispatcher).launch(
+            CoroutineExceptionHandler { _, throwable ->
+                analyticsReporter.addNonFatalReport(throwable)
+            }
+        ) {
+            val deviceTokenFirebaseCloudMessaging = RegisterDevice(
+                TdApi.DeviceTokenFirebaseCloudMessaging(token, false),
+                longArrayOf()
+            )
+            send(deviceTokenFirebaseCloudMessaging)
+        }
+    }
+
     private fun handle(state: TdApi.UpdateAuthorizationState) {
         _currentAuthState.value = state
 
         when (state.authorizationState) {
-            is TdApi.AuthorizationStateWaitTdlibParameters -> CoroutineScope(ioDispatcher).launch {
+            is TdApi.AuthorizationStateWaitTdlibParameters -> CoroutineScope(ioDispatcher).launch(
+                CoroutineExceptionHandler { _, throwable ->
+                    analyticsReporter.addNonFatalReport(throwable)
+                }
+            ) {
                 send(setTdlibParameters(context))
             }
 
-            is TdApi.AuthorizationStateReady -> CoroutineScope(ioDispatcher).launch {
+            is TdApi.AuthorizationStateReady -> CoroutineScope(ioDispatcher).launch(
+                CoroutineExceptionHandler { _, throwable ->
+                    analyticsReporter.addNonFatalReport(throwable)
+                }
+            ) {
                 val token = FirebaseMessaging.getInstance().token.await()
                 val deviceTokenFirebaseCloudMessaging = RegisterDevice(
                     TdApi.DeviceTokenFirebaseCloudMessaging(token, false),
