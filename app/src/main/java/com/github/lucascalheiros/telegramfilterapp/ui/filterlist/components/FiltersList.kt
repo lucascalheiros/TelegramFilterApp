@@ -1,27 +1,22 @@
 package com.github.lucascalheiros.telegramfilterapp.ui.filterlist.components
 
-import android.content.Intent
-import android.provider.Settings
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.github.lucascalheiros.domain.model.Filter
 import com.github.lucascalheiros.domain.model.FilterStrategy
 import com.github.lucascalheiros.telegramfilterapp.R
 import com.github.lucascalheiros.telegramfilterapp.notification.channels.ChannelType
+import com.github.lucascalheiros.telegramfilterapp.ui.components.FilterMoreOptionsDropdownMenu
 import com.github.lucascalheiros.telegramfilterapp.ui.theme.TelegramFilterAppTheme
 
 
@@ -42,53 +37,35 @@ fun FiltersList(
                     onOpenFilterMessages(filter.id)
                 },
                 headlineContent = {
-                    Text(filter.title)
+                    Text(
+                        filter.title,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 },
                 supportingContent = {
-                    Text(filter.queryOrRegexFilter())
+                    Text(
+                        filter.queryOrRegexFilter(),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 },
                 trailingContent = {
-                    Row {
-                        IconButton(openNotificationChannelSetting(filter)) {
-                            Icon(
-                                painterResource(R.drawable.ic_notifications),
-                                stringResource(R.string.notification_settings)
-                            )
-                        }
-                        IconButton({
+                    FilterMoreOptionsDropdownMenu(
+                        filterChannelType = ChannelType.FilteredMessage(filter),
+                        onFilterSettingsClick = {
                             onOpenFilterSettings(filter.id)
-                        }) {
-                            Icon(
-                                painterResource(R.drawable.ic_edit),
-                                stringResource(R.string.edit)
-                            )
-                        }
-                        IconButton({
+                        },
+                        onDeleteFilterClick = {
                             onDeleteFilter(filter.id, filter.title)
-                        }) {
-                            Icon(
-                                painterResource(R.drawable.ic_delete),
-                                stringResource(R.string.delete)
-                            )
                         }
-                    }
+                    )
                 }
             )
             if (index != filters.lastIndex) {
                 HorizontalDivider()
             }
         }
-    }
-}
-
-@Composable
-private fun openNotificationChannelSetting(filter: Filter): () -> Unit {
-    val context = LocalContext.current
-    return {
-        val intent = Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
-            .putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
-            .putExtra(Settings.EXTRA_CHANNEL_ID, ChannelType.FilteredMessage(filter).channelId)
-        context.startActivity(intent)
     }
 }
 

@@ -50,7 +50,9 @@ fun FilterListScreenContent(
                     if (state.isLogoutOnGoing) {
                         return@TopAppBar
                     }
-                    LogoutButtonWithConfirmationAlert { dispatch(FilterListIntent.Logout) }
+                    FilterListScreenOptions(
+                        onHelp = {},
+                        onLogout = { dispatch(FilterListIntent.Logout) })
                 }
             )
         },
@@ -65,9 +67,10 @@ fun FilterListScreenContent(
             }
         }
     ) { innerPadding ->
-        Box(Modifier
-            .padding(innerPadding)
-            .fillMaxSize()
+        Box(
+            Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
         ) {
             if (state.isLogoutOnGoing) {
                 CircularProgressIndicator(
