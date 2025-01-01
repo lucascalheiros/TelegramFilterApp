@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.github.lucascalheiros.analytics.reporter.AnalyticsReporter
+import com.github.lucascalheiros.domain.usecases.DeleteFilterUseCase
 import com.github.lucascalheiros.domain.usecases.GetFilterUseCase
 import com.github.lucascalheiros.domain.usecases.GetMessagesUseCase
 import com.github.lucascalheiros.telegramfilterapp.navigation.NavRoute
@@ -25,6 +26,7 @@ class FilterMessagesViewModel @Inject constructor(
     private val getMessagesUseCase: GetMessagesUseCase,
     private val getFilterUseCase: GetFilterUseCase,
     private val analyticsReporter: AnalyticsReporter,
+    private val deleteFilterUseCase: DeleteFilterUseCase,
 ) : ViewModel() {
 
     private val filterSettingsParam = savedStateHandle.toRoute<NavRoute.FilterSettings>()
@@ -45,6 +47,7 @@ class FilterMessagesViewModel @Inject constructor(
     private suspend fun intentHandleMiddleware(intent: FilterMessagesIntent) {
         when (intent) {
             FilterMessagesIntent.LoadData -> loadData()
+            FilterMessagesIntent.DeleteFilter -> deleteFilter()
         }
     }
 
@@ -57,7 +60,16 @@ class FilterMessagesViewModel @Inject constructor(
     private suspend fun loadData() {
         reduceAction(FilterMessagesAction.LoadingMessage)
         val filter = getFilterUseCase.getFilter(filterId) ?: return
+        reduceAction(FilterMessagesAction.SetFilter(filter))
         val messages = getMessagesUseCase(filter)
         reduceAction(FilterMessagesAction.SetMessages(messages))
+    }
+
+    private suspend fun deleteFilter() {
+        try {
+            deleteFilterUseCase(filterId)
+        } catch (_: Exception) {
+        }
+        reduceAction(FilterMessagesAction.Close)
     }
 }

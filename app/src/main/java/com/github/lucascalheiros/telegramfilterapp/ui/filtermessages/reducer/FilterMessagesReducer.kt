@@ -20,6 +20,10 @@ class FilterMessagesReducer @Inject constructor() :
             FilterMessagesAction.LoadingMessage -> state.copy(
                 isLoadingMessages = true
             )
+
+            FilterMessagesAction.Close -> state.copy(close = true)
+
+            is FilterMessagesAction.SetFilter -> state.copy(filter = action.filter)
         }
     }
 
