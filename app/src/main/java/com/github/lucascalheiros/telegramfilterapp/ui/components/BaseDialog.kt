@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -37,17 +39,23 @@ fun BaseDialog(
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.Start,
                 ) {
-                    title()
+                    ProvideTextStyle(MaterialTheme.typography.headlineSmall) {
+                        title()
+                    }
                 }
                 Spacer(Modifier.height(16.dp))
-                content()
+                ProvideTextStyle(MaterialTheme.typography.bodyMedium) {
+                    content()
+                }
                 Spacer(Modifier.height(24.dp))
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.End,
                 ) {
-                    actions()
+                    ProvideTextStyle(MaterialTheme.typography.labelLarge) {
+                        actions()
+                    }
                 }
             }
         }

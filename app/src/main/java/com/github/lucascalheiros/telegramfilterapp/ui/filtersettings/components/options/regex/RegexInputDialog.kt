@@ -28,20 +28,15 @@ fun RegexInputDialog(
         }
     }
     BaseDialog(
-        {
-            Text(
-                text = stringResource(R.string.regex_input),
-                style = MaterialTheme.typography.titleLarge
-            )
-        },
-        {
+        title = { Text(text = stringResource(R.string.regex_input)) },
+        content = {
             TextField(
                 value = queryText,
                 onValueChange = { queryText = it },
                 label = { Text(stringResource(R.string.regex)) },
             )
         },
-        {
+        actions = {
             TextButton(
                 onClick = { onCancel() },
             ) {
@@ -54,6 +49,6 @@ fun RegexInputDialog(
                 Text(stringResource(R.string.confirm))
             }
         },
-        onCancel
+        onDismissRequest = onCancel
     )
 }
