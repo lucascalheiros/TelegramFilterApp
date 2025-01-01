@@ -41,11 +41,11 @@ class TelegramSetupReducerTest {
     @Test
     fun `test reduce with UpdateStep action`() {
         val initialState = TelegramSetupUiState(step = AuthorizationStep.PhoneInput, isStepLoading = true)
-        val action = TelegramSetupAction.UpdateStep(step = AuthorizationStep.CodeInput)
+        val action = TelegramSetupAction.UpdateStep(step = AuthorizationStep.CodeInput("000"))
 
         val newState = reducer.reduce(initialState, action)
 
-        assertEquals(AuthorizationStep.CodeInput, newState.step)
+        assertEquals(AuthorizationStep.CodeInput("000"), newState.step)
         assertEquals(false, newState.isStepLoading)
     }
 
