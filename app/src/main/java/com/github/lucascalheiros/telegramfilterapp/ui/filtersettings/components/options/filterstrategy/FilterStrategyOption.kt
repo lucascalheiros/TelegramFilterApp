@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.github.lucascalheiros.domain.model.FilterStrategy
 import com.github.lucascalheiros.telegramfilterapp.R
 import com.github.lucascalheiros.telegramfilterapp.ui.components.SettingItem
+import com.github.lucascalheiros.telegramfilterapp.ui.components.linkify
 
 @Composable
 fun FilterStrategyOption(strategy: FilterStrategy, onSelectStrategy: (FilterStrategy) -> Unit) {
@@ -55,34 +56,34 @@ fun FilterStrategyOption(strategy: FilterStrategy, onSelectStrategy: (FilterStra
 
                 DropdownMenuItem(
                     text = {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            InfoButtonWithDialog(
-                                FilterStrategy.LocalRegexSearch.text(),
-                                FilterStrategy.LocalRegexSearch.infoText()
-                            )
-                            Text(FilterStrategy.LocalRegexSearch.text())
-                        }
+                        Text(FilterStrategy.LocalRegexSearch.text())
                     },
                     onClick = {
                         onSelectStrategy(FilterStrategy.LocalRegexSearch)
                         menuExpanded = false
                     },
+                    leadingIcon = {
+                        InfoButtonWithDialog(
+                            FilterStrategy.LocalRegexSearch.text(),
+                            FilterStrategy.LocalRegexSearch.infoText()
+                        )
+                    }
                 )
                 HorizontalDivider()
                 DropdownMenuItem(
                     text = {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            InfoButtonWithDialog(
-                                FilterStrategy.TelegramQuerySearch.text(),
-                                FilterStrategy.TelegramQuerySearch.infoText()
-                            )
-                            Text(FilterStrategy.TelegramQuerySearch.text())
-                        }
+                        Text(FilterStrategy.TelegramQuerySearch.text())
                     },
                     onClick = {
                         onSelectStrategy(FilterStrategy.TelegramQuerySearch)
                         menuExpanded = false
                     },
+                    leadingIcon = {
+                        InfoButtonWithDialog(
+                            FilterStrategy.TelegramQuerySearch.text(),
+                            FilterStrategy.TelegramQuerySearch.infoText()
+                        )
+                    }
                 )
             }
         }
@@ -107,7 +108,7 @@ fun InfoButtonWithDialog(
                     Spacer(Modifier.height(16.dp))
                     Text(title, style = MaterialTheme.typography.titleLarge)
                     Spacer(Modifier.height(16.dp))
-                    Text(content, Modifier.fillMaxWidth())
+                    Text(content.linkify(), Modifier.fillMaxWidth())
                     Spacer(Modifier.height(16.dp))
                     Row(Modifier.fillMaxWidth()) {
                         Spacer(Modifier.weight(1f))
