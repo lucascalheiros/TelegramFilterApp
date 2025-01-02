@@ -12,7 +12,7 @@ import com.github.lucascalheiros.data.notification.FilteredNotificationEmitter
 import com.github.lucascalheiros.domain.model.Filter
 import com.github.lucascalheiros.domain.model.Message
 import com.github.lucascalheiros.domain.usecases.GetFilterUseCase
-import com.github.lucascalheiros.telegramfilterapp.MainActivity
+import com.github.lucascalheiros.telegramfilterapp.ui.MainActivity
 import com.github.lucascalheiros.telegramfilterapp.R
 import com.github.lucascalheiros.telegramfilterapp.notification.channels.ChannelSyncHelper
 import com.github.lucascalheiros.telegramfilterapp.notification.channels.ChannelType
