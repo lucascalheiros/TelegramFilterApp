@@ -1,20 +1,26 @@
 package com.github.lucascalheiros.telegramfilterapp.ui.components
 
-import android.provider.Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS
+import android.provider.Settings
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.espresso.intent.Intents
-import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
+import androidx.test.espresso.intent.matcher.IntentMatchers
 import com.github.lucascalheiros.telegramfilterapp.notification.channels.ChannelType
 import com.github.lucascalheiros.telegramfilterapp.ui.theme.TelegramFilterAppTheme
+import dagger.hilt.android.testing.HiltTestApplication
 import io.mockk.every
 import io.mockk.mockk
-import junit.framework.TestCase.assertFalse
+import junit.framework.TestCase
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
+@RunWith(RobolectricTestRunner::class)
+@Config(application = HiltTestApplication::class)
 class FilterMoreOptionsDropdownMenuKtTest {
     @get:Rule
     val composeTestRule = createComposeRule()
@@ -81,7 +87,7 @@ class FilterMoreOptionsDropdownMenuKtTest {
         composeTestRule.onNodeWithTag(FilterMoreOptionsDropdownMenuTestTags.CANCEL_DELETE)
             .performClick()
 
-        assertFalse(deleteConfirmed)
+        TestCase.assertFalse(deleteConfirmed)
 
     }
 
@@ -137,7 +143,7 @@ class FilterMoreOptionsDropdownMenuKtTest {
         composeTestRule.onNodeWithTag(FilterMoreOptionsDropdownMenuTestTags.NOTIFICATIONS_MENU_OPTION)
             .performClick()
 
-        Intents.intended(hasAction(ACTION_CHANNEL_NOTIFICATION_SETTINGS))
+        Intents.intended(IntentMatchers.hasAction(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS))
 
         Intents.release()
     }
