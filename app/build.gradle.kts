@@ -20,7 +20,7 @@ android {
         versionCode = Configs.VERSION_CODE
         versionName = Configs.VERSION_NAME
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.github.lucascalheiros.telegramfilterapp.CustomTestRunner"
     }
 
     buildTypes {
@@ -50,6 +50,7 @@ android {
             merges += "META-INF/LICENSE-notice.md"
         }
     }
+    testOptions.unitTests.isIncludeAndroidResources = true
 }
 
 dependencies {
@@ -75,7 +76,15 @@ dependencies {
 
     testImplementation(libs.junit)
     testImplementation(libs.bundles.mockk)
+    testImplementation(libs.roboeletric)
+    testImplementation(libs.hilt.testing)
+    testImplementation(libs.androidx.junit)
+    testImplementation(libs.androidx.espresso.core)
+    testImplementation(libs.androidx.espresso.intents)
+    testImplementation(platform(libs.androidx.compose.bom))
+    testImplementation(libs.androidx.ui.test.junit4)
 
+    androidTestImplementation(libs.hilt.testing)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.espresso.intents)

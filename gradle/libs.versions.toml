@@ -27,6 +27,7 @@ coroutines = "1.9.0"
 splashScreen = "1.0.1"
 crashlyticsPlugin = "3.0.2"
 mockkVersion = "1.13.14"
+roboeletricVersion = "4.14.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -48,6 +49,7 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+hilt-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
 libphonenumber = { group = "com.googlecode.libphonenumber", name = "libphonenumber", version.ref = "libphonenumber" }
 androidx-compose-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "composeViewModel" }
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room_version" }
@@ -66,6 +68,7 @@ kotlin-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutine
 androidx-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashScreen" }
 mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockkVersion" }
 mockk-agent = { group = "io.mockk", name = "mockk-agent", version.ref = "mockkVersion" }
+roboeletric = { group = "org.robolectric", name = "robolectric", version.ref = "roboeletricVersion" }
 
 [bundles]
 firebase = [
