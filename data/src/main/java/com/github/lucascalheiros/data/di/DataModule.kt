@@ -45,21 +45,32 @@ object DataModule {
     }
 
 
-    @Module
-    @InstallIn(SingletonComponent::class)
-    interface Bindings {
 
-        @Binds
-        fun bindFilterRepository(impl: FilterRepositoryImpl): FilterRepository
+}
+@Module
+@InstallIn(SingletonComponent::class)
+interface FilterRepositoryBinding {
+    @Binds
+    fun bindFilterRepository(impl: FilterRepositoryImpl): FilterRepository
+}
 
-        @Binds
-        fun bindMessageRepository(impl: MessageRepositoryImpl): MessageRepository
+@Module
+@InstallIn(SingletonComponent::class)
+interface MessageRepositoryBinding {
+    @Binds
+    fun bindMessageRepository(impl: MessageRepositoryImpl): MessageRepository
+}
 
-        @Binds
-        fun bindTelegramSetupRepository(impl: TelegramSetupRepositoryImpl): TelegramSetupRepository
+@Module
+@InstallIn(SingletonComponent::class)
+interface TelegramSetupRepositoryBinding {
+    @Binds
+    fun bindTelegramSetupRepository(impl: TelegramSetupRepositoryImpl): TelegramSetupRepository
+}
 
-        @Binds
-        fun bindChatRepository(impl: ChatRepositoryImpl): ChatRepository
-    }
-
+@Module
+@InstallIn(SingletonComponent::class)
+interface ChatRepositoryBinding {
+    @Binds
+    fun bindChatRepository(impl: ChatRepositoryImpl): ChatRepository
 }
