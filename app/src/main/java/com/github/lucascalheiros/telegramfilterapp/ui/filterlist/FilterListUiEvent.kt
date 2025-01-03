@@ -5,4 +5,6 @@ sealed interface FilterListUiEvent {
         data class Success(val filterName: String) : DeleteFilter
         data class Failure(val filterName: String) : DeleteFilter
     }
+
+    data object DataLoadingFailure : FilterListUiEvent
 }

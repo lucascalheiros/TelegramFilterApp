@@ -17,9 +17,12 @@ class FilterListReducer @Inject constructor() :
             LogoutAction.Handled -> state.copy(logoutState = LogoutState.Idle)
             LogoutAction.Loading -> state.copy(logoutState = LogoutState.Loading)
             LogoutAction.Success -> state.copy(logoutState = LogoutState.Success)
-            FilterLoadAction.Failure -> state.copy(filterState = FilterState.Failure(state.filters))
-            FilterLoadAction.Loading -> state.copy(filterState = FilterState.Loading(state.filters))
-            is FilterLoadAction.Success -> state.copy(filterState = FilterState.Success(action.data))
+            is FilterLoadAction.SetLoad -> state.copy(
+                filterState = if (action.loading) FilterState.Loading(state.filters)
+                else FilterState.Loaded(state.filters)
+            )
+
+            is FilterLoadAction.Success -> state.copy(filterState = FilterState.Loaded(action.data))
         }
     }
 

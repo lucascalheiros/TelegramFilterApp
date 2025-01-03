@@ -61,6 +61,10 @@ private fun HandleUiEvent(eventFlow: Flow<FilterListUiEvent>, snackbarHostState:
                     is FilterListUiEvent.DeleteFilter.Success -> snackbarHostState.showSnackbar(
                         context.getString(R.string.filter_deleted_with_success)
                     )
+
+                    FilterListUiEvent.DataLoadingFailure -> snackbarHostState.showSnackbar(
+                        context.getString(R.string.data_loading_failed)
+                    )
                 }
             }
         }

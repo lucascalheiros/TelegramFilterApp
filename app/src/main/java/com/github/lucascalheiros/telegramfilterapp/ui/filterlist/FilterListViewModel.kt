@@ -66,13 +66,14 @@ class FilterListViewModel @Inject constructor(
 
     private suspend fun loadData() {
         return try {
-            reduceAction(FilterLoadAction.Loading)
+            reduceAction(FilterLoadAction.SetLoad(true))
             val filters = getFilterUseCase.getFilters()
             reduceAction(FilterLoadAction.Success(filters))
         } catch (e: Exception) {
             logError("::handleLoadData", e)
             analyticsReporter.addNonFatalReport(e)
-            reduceAction(FilterLoadAction.Failure)
+            reduceAction(FilterLoadAction.SetLoad(false))
+            sendEvent(FilterListUiEvent.DataLoadingFailure)
         }
     }
 

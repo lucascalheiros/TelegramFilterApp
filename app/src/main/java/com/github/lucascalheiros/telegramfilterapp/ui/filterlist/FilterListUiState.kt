@@ -21,8 +21,7 @@ sealed interface FilterState {
         override val data: List<Filter> = listOf()
     }
     data class Loading(override val data: List<Filter>): FilterState
-    data class Success(override val data: List<Filter>): FilterState
-    data class Failure(override val data: List<Filter>): FilterState
+    data class Loaded(override val data: List<Filter>): FilterState
 }
 
 sealed interface LogoutState {

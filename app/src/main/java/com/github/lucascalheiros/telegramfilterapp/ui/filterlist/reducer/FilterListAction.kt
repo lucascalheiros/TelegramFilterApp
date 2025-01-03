@@ -5,8 +5,7 @@ import com.github.lucascalheiros.domain.model.Filter
 sealed interface FilterListAction
 
 sealed interface FilterLoadAction: FilterListAction {
-    data object Failure : FilterLoadAction
-    data object Loading : FilterLoadAction
+    data class SetLoad(val loading: Boolean) : FilterLoadAction
     data class Success(val data: List<Filter>) : FilterLoadAction
 }
 
