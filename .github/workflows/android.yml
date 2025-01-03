@@ -27,7 +27,7 @@ jobs:
       run: ./gradlew testDebugUnitTest
 
     - name: Build
-      run: ./gradlew compileDebug
+      run: ./gradlew app:compileDebug
 
     - name: Lint
       run: ./gradlew lint
