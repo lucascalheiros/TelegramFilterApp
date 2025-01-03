@@ -51,6 +51,7 @@ android {
         }
     }
     testOptions.unitTests.isIncludeAndroidResources = true
+    testOptions.unitTests.isReturnDefaultValues = true
 }
 
 dependencies {
@@ -74,15 +75,7 @@ dependencies {
     implementation(libs.serialization.json)
     implementation(libs.androidx.splashscreen)
 
-    testImplementation(libs.junit)
-    testImplementation(libs.bundles.mockk)
-    testImplementation(libs.roboeletric)
-    testImplementation(libs.hilt.testing)
-    testImplementation(libs.androidx.junit)
-    testImplementation(libs.androidx.espresso.core)
-    testImplementation(libs.androidx.espresso.intents)
-    testImplementation(platform(libs.androidx.compose.bom))
-    testImplementation(libs.androidx.ui.test.junit4)
+    testImplementation(libs.bundles.unitTests)
 
     androidTestImplementation(libs.hilt.testing)
     androidTestImplementation(libs.androidx.junit)

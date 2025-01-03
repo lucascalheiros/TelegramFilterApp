@@ -52,19 +52,19 @@ class FilterListReducerTest {
     }
 
     @Test
-    fun `test reduce with FilterLoadAction_Failure`() {
-        val initialState = FilterListUiState(filterState = FilterState.Success(listOf(FilterMocks.defaultFilter(), FilterMocks.filterWithNoChatIds())))
-        val action = FilterLoadAction.Failure
+    fun `test reduce with FilterLoadAction_SetLoad(false)`() {
+        val initialState = FilterListUiState(filterState = FilterState.Loaded(listOf(FilterMocks.defaultFilter(), FilterMocks.filterWithNoChatIds())))
+        val action = FilterLoadAction.SetLoad(false)
 
         val newState = reducer.reduce(initialState, action)
 
-        assertEquals(FilterState.Failure(initialState.filters), newState.filterState)
+        assertEquals(FilterState.Loaded(initialState.filters), newState.filterState)
     }
 
     @Test
-    fun `test reduce with FilterLoadAction_Loading`() {
-        val initialState = FilterListUiState(filterState = FilterState.Success(listOf(FilterMocks.defaultFilter(), FilterMocks.filterWithNoChatIds())))
-        val action = FilterLoadAction.Loading
+    fun `test reduce with FilterLoadAction_SetLoad(true)`() {
+        val initialState = FilterListUiState(filterState = FilterState.Loaded(listOf(FilterMocks.defaultFilter(), FilterMocks.filterWithNoChatIds())))
+        val action = FilterLoadAction.SetLoad(true)
 
         val newState = reducer.reduce(initialState, action)
 
@@ -79,6 +79,6 @@ class FilterListReducerTest {
 
         val newState = reducer.reduce(initialState, action)
 
-        assertEquals(FilterState.Success(newFilters), newState.filterState)
+        assertEquals(FilterState.Loaded(newFilters), newState.filterState)
     }
 }
