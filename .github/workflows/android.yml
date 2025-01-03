@@ -22,5 +22,19 @@ jobs:
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
-    - name: Build with Gradle
-      run: ./gradlew build
+
+    - name: Tests
+      run: ./gradlew testDebugUnitTest
+
+    - name: Build
+      run: ./gradlew compileDebug
+
+    - name: Lint
+      run: ./gradlew lint
+
+    - name: Upload Lint Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: Lint Report
+        path: build/reports/lint-results-debug.html
+        overwrite: true
