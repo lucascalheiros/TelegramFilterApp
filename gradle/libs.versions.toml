@@ -1,6 +1,6 @@
 [versions]
 agp = "8.7.3"
-kotlin = "2.0.21"
+kotlin = "2.1.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -10,20 +10,20 @@ activityCompose = "1.9.3"
 composeBom = "2024.12.01"
 appcompat = "1.7.0"
 material = "1.12.0"
-hilt = "2.51.1"
-ksp = "2.0.21-1.0.28"
+hilt = "2.54"
+ksp = "2.1.0-1.0.29"
 libphonenumber = "8.13.50"
 composeViewModel = "2.8.7"
 room_version = "2.6.1"
 nav_version = "2.8.5"
 hilt_nav_version = "1.2.0"
 serialization_json = "1.7.3"
-jetbrainsKotlinJvm = "2.0.21"
-dagger = "2.52"
+jetbrainsKotlinJvm = "2.1.0"
+dagger = "2.54"
 googleServices = "4.4.2"
 firebaseBom = "33.7.0"
 firebaseMessagingKtx = "24.1.0"
-coroutines = "1.9.0"
+coroutines = "1.10.1"
 splashScreen = "1.0.1"
 crashlyticsPlugin = "3.0.2"
 mockkVersion = "1.13.14"
@@ -100,7 +100,6 @@ unitTests = [
     "androidx-ui-test-junit4",
     "hilt-testing",
     "junit",
-    "androidx-junit",
     "androidx-espresso-core",
     "androidx-espresso-intents",
     "mockk-android",
