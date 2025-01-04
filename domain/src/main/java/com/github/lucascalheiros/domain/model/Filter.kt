@@ -15,7 +15,7 @@ data class Filter(
 ) {
     fun hasMatchInText(text: String): Boolean {
         return when (strategy) {
-            FilterStrategy.TelegramQuerySearch -> queries.any { text.contains(it, ignoreCase = true) }
+            FilterStrategy.TelegramQuerySearch -> queries.all { text.contains(it, ignoreCase = true) }
             FilterStrategy.LocalRegexSearch -> Regex(regex).containsMatchIn(text)
         }
     }

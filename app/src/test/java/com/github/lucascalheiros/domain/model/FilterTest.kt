@@ -8,7 +8,7 @@ import org.junit.Test
 class FilterTest {
 
     @Test
-    fun `hasMatchInText should return true when text contains any query (TelegramQuerySearch)`() {
+    fun `hasMatchInText should return true when text contains all query (TelegramQuerySearch)`() {
         val filter = Filter(
             id = 1L,
             title = "Test Filter",
@@ -19,13 +19,12 @@ class FilterTest {
             strategy = FilterStrategy.TelegramQuerySearch
         )
 
-        assertTrue(filter.hasMatchInText("This is a hello message"))
-        assertTrue(filter.hasMatchInText("The world is beautiful"))
+        assertTrue(filter.hasMatchInText("The hello world is beautiful"))
         assertFalse(filter.hasMatchInText("No matching query here"))
     }
 
     @Test
-    fun `hasMatchInText should return false when text does not contain any query (TelegramQuerySearch)`() {
+    fun `hasMatchInText should return false when text does not contain all query (TelegramQuerySearch)`() {
         val filter = Filter(
             id = 1L,
             title = "Test Filter",
@@ -37,6 +36,8 @@ class FilterTest {
         )
 
         assertFalse(filter.hasMatchInText("No queries here"))
+        assertFalse(filter.hasMatchInText("This is a hello message"))
+
     }
 
     @Test
