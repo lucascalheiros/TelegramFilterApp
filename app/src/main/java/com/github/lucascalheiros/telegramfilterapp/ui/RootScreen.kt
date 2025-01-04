@@ -71,13 +71,10 @@ fun RootScreen(navHostController: NavHostController, startDestination: NavRoute?
                 )
             },
             exitTransition = {
-                slideOutOfContainer(
-                    AnimatedContentTransitionScope.SlideDirection.End,
-                    tween(400)
-                )
+                ExitTransition.None
             },
             popEnterTransition = {
-                null
+                EnterTransition.None
             },
             popExitTransition = {
                 slideOutOfContainer(
@@ -98,13 +95,10 @@ fun RootScreen(navHostController: NavHostController, startDestination: NavRoute?
                 )
             },
             exitTransition = {
-                slideOutOfContainer(
-                    AnimatedContentTransitionScope.SlideDirection.End,
-                    tween(400)
-                )
+                ExitTransition.None
             },
             popEnterTransition = {
-                null
+                EnterTransition.None
             },
             popExitTransition = {
                 slideOutOfContainer(
