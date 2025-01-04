@@ -3,10 +3,8 @@ package com.github.lucascalheiros.data.di
 import android.content.Context
 import androidx.room.Room
 import com.github.lucascalheiros.data.local.AppDatabase
-import com.github.lucascalheiros.data.local.MIGRATION_1_2
-import com.github.lucascalheiros.data.local.MIGRATION_3_4
-import com.github.lucascalheiros.data.local.MIGRATION_4_5
 import com.github.lucascalheiros.data.local.dao.FilterDao
+import com.github.lucascalheiros.data.local.migrations
 import com.github.lucascalheiros.data.repositories.ChatRepositoryImpl
 import com.github.lucascalheiros.data.repositories.FilterRepositoryImpl
 import com.github.lucascalheiros.data.repositories.MessageRepositoryImpl
@@ -33,9 +31,7 @@ object DataModule {
             AppDatabase::class.java,
             "app-database"
         ).addMigrations(
-            MIGRATION_1_2,
-            MIGRATION_3_4,
-            MIGRATION_4_5
+            *migrations
         ).build()
     }
 
@@ -43,10 +39,8 @@ object DataModule {
     fun provideFilterDao(db: AppDatabase): FilterDao {
         return db.filterDao()
     }
-
-
-
 }
+
 @Module
 @InstallIn(SingletonComponent::class)
 interface FilterRepositoryBinding {

@@ -21,18 +21,27 @@ class FilterRepositoryImpl @Inject constructor(
         return filterLocalDataSource.getFilter(id)
     }
 
-    override suspend fun saveFilter(filter: Filter) {
-        filterLocalDataSource.save(
+    override suspend fun saveFilter(filter: Filter): Long {
+        val id = filterLocalDataSource.save(
             filterDb = filter.toDb(),
             chatIds = filter.chatIds,
             queries = filter.queries
         )
         filterDataChangeHandler.onFilterDataChanged(getFilters())
+        return id
     }
 
     override suspend fun deleteFilter(id: Long) {
         filterLocalDataSource.deleteFilter(id)
         filterDataChangeHandler.onFilterDataChanged(getFilters())
+    }
+
+    override suspend fun incrementNewMessage(id: Long) {
+        filterLocalDataSource.incrementNewMessage(id)
+    }
+
+    override suspend fun resetNewMessages(id: Long) {
+        filterLocalDataSource.resetNewMessages(id)
     }
 
 }

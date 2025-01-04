@@ -1,5 +1,6 @@
 package com.github.lucascalheiros.data.local
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.github.lucascalheiros.data.local.dao.FilterDao
@@ -14,7 +15,7 @@ import com.github.lucascalheiros.data.model.FilterToQueriesCrossRefDb
         FilterToQueriesCrossRefDb::class,
     ],
     exportSchema = true,
-    version = 5
+    version = 6
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun filterDao(): FilterDao

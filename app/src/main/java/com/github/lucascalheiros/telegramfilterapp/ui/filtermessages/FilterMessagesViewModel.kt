@@ -8,6 +8,7 @@ import com.github.lucascalheiros.analytics.reporter.AnalyticsReporter
 import com.github.lucascalheiros.domain.usecases.DeleteFilterUseCase
 import com.github.lucascalheiros.domain.usecases.GetFilterUseCase
 import com.github.lucascalheiros.domain.usecases.GetMessagesUseCase
+import com.github.lucascalheiros.domain.usecases.MarkFilterMessagesAsReadUseCase
 import com.github.lucascalheiros.telegramfilterapp.navigation.NavRoute
 import com.github.lucascalheiros.telegramfilterapp.ui.filtermessages.reducer.FilterMessagesAction
 import com.github.lucascalheiros.telegramfilterapp.ui.filtermessages.reducer.FilterMessagesReducer
@@ -27,6 +28,7 @@ class FilterMessagesViewModel @Inject constructor(
     private val getFilterUseCase: GetFilterUseCase,
     private val analyticsReporter: AnalyticsReporter,
     private val deleteFilterUseCase: DeleteFilterUseCase,
+    private val markFilterMessagesAsReadUseCase: MarkFilterMessagesAsReadUseCase
 ) : ViewModel() {
 
     private val filterSettingsParam = savedStateHandle.toRoute<NavRoute.FilterSettings>()
@@ -58,6 +60,7 @@ class FilterMessagesViewModel @Inject constructor(
     }
 
     private suspend fun loadData() {
+        markFilterMessagesAsReadUseCase(filterId)
         reduceAction(FilterMessagesAction.LoadingMessage)
         val filter = getFilterUseCase.getFilter(filterId) ?: return
         reduceAction(FilterMessagesAction.SetFilter(filter))

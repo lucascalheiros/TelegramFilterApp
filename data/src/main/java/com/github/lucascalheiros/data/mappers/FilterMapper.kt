@@ -12,7 +12,8 @@ fun Filter.toDb(): FilterDb {
         title = title,
         limitDate = limitDate,
         regex = regex,
-        strategy = strategy.toDb()
+        strategy = strategy.toDb(),
+        newMessagesCount = newMessagesCount
     )
 }
 
@@ -24,7 +25,8 @@ fun FilterWithQueriesAndChats.toModel(): Filter {
         chatIds = chats.map { it.chatId },
         limitDate = filterDb.limitDate,
         regex = filterDb.regex,
-        strategy = filterDb.strategy.toModel()
+        strategy = filterDb.strategy.toModel(),
+        newMessagesCount = filterDb.newMessagesCount
     )
 }
 

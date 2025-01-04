@@ -4,11 +4,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,6 +39,15 @@ fun FiltersList(
             ListItem(
                 modifier = Modifier.clickable {
                     onOpenFilterMessages(filter.id)
+                },
+                leadingContent = {
+                    if (filter.newMessagesCount > 0) {
+                        BadgedBox({ Badge { Text(filter.newMessagesCount.toString()) } }) {
+                            Icon(painter = painterResource(R.drawable.ic_mail_closed), null)
+                        }
+                    } else {
+                        Icon(painter = painterResource(R.drawable.ic_mail_opened), null)
+                    }
                 },
                 headlineContent = {
                     Text(
@@ -96,6 +109,16 @@ fun FilterListPreview() {
                     listOf(),
                     0,
                     FilterStrategy.TelegramQuerySearch
+                ),
+                Filter(
+                    1,
+                    "Filter 2",
+                    listOf("Word 1", "Word 2"),
+                    ".*",
+                    listOf(),
+                    0,
+                    FilterStrategy.LocalRegexSearch,
+                    10
                 )
             )
         )

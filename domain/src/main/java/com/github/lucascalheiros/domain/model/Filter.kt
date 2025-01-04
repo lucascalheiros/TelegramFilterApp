@@ -10,7 +10,8 @@ data class Filter(
     val regex: String,
     val chatIds: List<Long>,
     val limitDate: Long,
-    val strategy: FilterStrategy
+    val strategy: FilterStrategy,
+    val newMessagesCount: Int = 0
 ) {
     fun hasMatchInText(text: String): Boolean {
         return when (strategy) {

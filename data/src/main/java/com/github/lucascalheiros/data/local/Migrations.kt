@@ -22,3 +22,16 @@ val MIGRATION_4_5 = object : Migration(4, 5) {
         db.execSQL("alter table FilterDb add column strategy TEXT not null default 'TelegramQuerySearch'")
     }
 }
+
+val MIGRATION_5_6 = object : Migration(5, 6) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("alter table FilterDb add column newMessagesCount INTEGER not null default 0")
+    }
+}
+
+val migrations = arrayOf(
+    MIGRATION_1_2,
+    MIGRATION_3_4,
+    MIGRATION_4_5,
+    MIGRATION_5_6
+)

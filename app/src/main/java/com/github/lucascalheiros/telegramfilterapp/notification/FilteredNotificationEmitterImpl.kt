@@ -12,6 +12,7 @@ import com.github.lucascalheiros.data.notification.FilteredNotificationEmitter
 import com.github.lucascalheiros.domain.model.Filter
 import com.github.lucascalheiros.domain.model.Message
 import com.github.lucascalheiros.domain.usecases.GetFilterUseCase
+import com.github.lucascalheiros.domain.usecases.IncrementFilterNewMessageUseCase
 import com.github.lucascalheiros.telegramfilterapp.ui.MainActivity
 import com.github.lucascalheiros.telegramfilterapp.R
 import com.github.lucascalheiros.telegramfilterapp.notification.channels.ChannelSyncHelper
@@ -23,6 +24,7 @@ class FilteredNotificationEmitterImpl @Inject constructor(
     private val channelSyncHelper: ChannelSyncHelper,
     private val getFilterUseCase: GetFilterUseCase,
     @ApplicationContext private val context: Context,
+    private val incrementFilterNewMessageUseCase: IncrementFilterNewMessageUseCase
 ) : FilteredNotificationEmitter {
     override suspend fun onMessage(message: Message, filters: List<Filter>) {
         if (ActivityCompat.checkSelfPermission(
@@ -34,6 +36,7 @@ class FilteredNotificationEmitterImpl @Inject constructor(
         }
         channelSyncHelper.syncChannels(getFilterUseCase.getFilters())
         filters.forEach { filter ->
+            incrementFilterNewMessageUseCase(filter.id)
 
             val action = NotificationActions.OpenFilterMessages(filter.id, message.id)
 

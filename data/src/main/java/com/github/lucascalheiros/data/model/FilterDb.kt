@@ -9,5 +9,6 @@ data class FilterDb(
     val title: String,
     val limitDate: Long,
     val regex: String,
-    val strategy: FilterStrategyDb
+    val strategy: FilterStrategyDb,
+    val newMessagesCount: Int = 0
 )

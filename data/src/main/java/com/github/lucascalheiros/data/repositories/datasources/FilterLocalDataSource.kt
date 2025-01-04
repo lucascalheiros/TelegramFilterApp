@@ -10,11 +10,11 @@ class FilterLocalDataSource @Inject constructor(
     private val dao: FilterDao
 ) {
 
-    suspend fun getFilters(): List<Filter> = dao.getFilters().map {
+    suspend fun getFilters(): List<Filter> = dao.getFilterWithQueriesAndChats().map {
         it.toModel()
     }
 
-    suspend fun getFilter(id: Long): Filter? = dao.getFilter(id)?.toModel()
+    suspend fun getFilter(id: Long): Filter? = dao.getFilterWithQueriesAndChats(id)?.toModel()
 
     suspend fun save(
         filterDb: FilterDb,
@@ -24,6 +24,14 @@ class FilterLocalDataSource @Inject constructor(
 
     suspend fun deleteFilter(id: Long) {
         dao.deleteFilter(id)
+    }
+
+    suspend fun incrementNewMessage(id: Long) {
+        dao.incrementNewMessageCounter(id)
+    }
+
+    suspend fun resetNewMessages(id: Long) {
+        dao.resetNewMessageCounter(id)
     }
 
 }

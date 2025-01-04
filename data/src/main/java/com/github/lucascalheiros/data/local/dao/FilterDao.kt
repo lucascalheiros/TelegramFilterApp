@@ -15,11 +15,15 @@ interface FilterDao {
 
     @Query("select * from FilterDb")
     @Transaction
-    suspend fun getFilters(): List<FilterWithQueriesAndChats>
+    suspend fun getFilterWithQueriesAndChats(): List<FilterWithQueriesAndChats>
 
     @Query("select * from FilterDb where id = :id")
     @Transaction
-    suspend fun getFilter(id: Long): FilterWithQueriesAndChats?
+    suspend fun getFilterWithQueriesAndChats(id: Long): FilterWithQueriesAndChats?
+
+    @Query("select * from FilterDb where id = :id")
+    @Transaction
+    suspend fun getFilter(id: Long): FilterDb?
 
     @Query("delete from ChatToFilterInfoCrossRefDb where filterId = :id")
     suspend fun clearChatIds(id: Long)
@@ -44,12 +48,13 @@ interface FilterDao {
         filterDb: FilterDb,
         chatIds: List<Long>,
         queries: List<String>
-    ) {
+    ): Long {
         val id = save(filterDb)
         clearChatIds(id)
         clearQueries(id)
         saveChats(chatIds.map { ChatToFilterInfoCrossRefDb(it, id) })
         saveQueries(queries.map { FilterToQueriesCrossRefDb(id, it) })
+        return id
     }
 
     @Transaction
@@ -59,4 +64,19 @@ interface FilterDao {
         clearChatIds(id)
     }
 
+    @Transaction
+    suspend fun incrementNewMessageCounter(id: Long) {
+        getFilter(id)?.also {
+            val incrementedFilter = it.copy(newMessagesCount = it.newMessagesCount + 1)
+            save(incrementedFilter)
+        }
+    }
+
+    @Transaction
+    suspend fun resetNewMessageCounter(id: Long) {
+        getFilter(id)?.also {
+            val incrementedFilter = it.copy(newMessagesCount = 0)
+            save(incrementedFilter)
+        }
+    }
 }
