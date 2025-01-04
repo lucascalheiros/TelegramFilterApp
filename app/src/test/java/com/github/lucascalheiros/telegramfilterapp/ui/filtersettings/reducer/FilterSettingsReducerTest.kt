@@ -55,6 +55,16 @@ class FilterSettingsReducerTest {
     }
 
     @Test
+    fun `test reduce with AddQuery action with trim`() {
+        val initialState = FilterSettingsUiState(queries = mutableListOf("Query1"))
+        val action = FilterSettingsAction.AddQuery(text = "   Query2    ")
+
+        val newState = reducer.reduce(initialState, action)
+
+        assertEquals(listOf("Query1", "Query2"), newState.queries)
+    }
+
+    @Test
     fun `test reduce with RemoveQuery action`() {
         val initialState = FilterSettingsUiState(queries = mutableListOf("Query1", "Query2"))
         val action = FilterSettingsAction.RemoveQuery(index = 1)

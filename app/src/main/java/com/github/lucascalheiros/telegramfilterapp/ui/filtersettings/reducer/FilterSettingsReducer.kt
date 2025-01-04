@@ -39,7 +39,7 @@ class FilterSettingsReducer @Inject constructor() :
 
             is AddQuery -> state.copy(
                 queries = state.queries.toMutableList().apply {
-                    add(action.text)
+                    add(action.text.trim())
                 },
             )
 
