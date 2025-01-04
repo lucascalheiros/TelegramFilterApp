@@ -24,7 +24,7 @@ jobs:
       run: chmod +x gradlew
 
     - name: Tests
-      run: ./gradlew testDebugUnitTest --info
+      run: ./gradlew testDebugUnitTest
 
     - name: Build
       run: ./gradlew app:compileDebugKotlin
@@ -36,5 +36,5 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: Lint Report
-        path: build/reports/lint-results-debug.html
+        path: app/build/reports/lint-results-debug.html
         overwrite: true
