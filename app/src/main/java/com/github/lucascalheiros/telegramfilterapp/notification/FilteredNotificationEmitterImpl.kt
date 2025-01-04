@@ -41,6 +41,7 @@ class FilteredNotificationEmitterImpl @Inject constructor(
             val action = NotificationActions.OpenFilterMessages(filter.id, message.id)
 
             val intent = Intent(context, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                 putExtras(action.extras())
                 setAction(action.actionIdentifier())
             }
