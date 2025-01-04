@@ -77,15 +77,15 @@ class FilterListViewModelTest {
 
         assertEquals(3, states.size)
 
-        val initialFilterState = states.removeFirst().filterState
+        val initialFilterState = states.removeAt(0).filterState
 
         assertEquals(FilterState.Idle, initialFilterState)
 
-        val loadingFilterState = states.removeFirst().filterState
+        val loadingFilterState = states.removeAt(0).filterState
 
         assertEquals(FilterState.Loading(listOf()), loadingFilterState)
 
-        val successFilterState = states.removeFirst().filterState
+        val successFilterState = states.removeAt(0).filterState
 
         assertEquals(FilterState.Loaded(firstFilterList), successFilterState)
 
@@ -97,11 +97,11 @@ class FilterListViewModelTest {
 
         advanceUntilIdle()
 
-        val secondLoadingFilterState = states.removeFirst().filterState
+        val secondLoadingFilterState = states.removeAt(0).filterState
 
         assertEquals(FilterState.Loading(firstFilterList), secondLoadingFilterState)
 
-        val secondSuccessFilterState = states.removeFirst().filterState
+        val secondSuccessFilterState = states.removeAt(0).filterState
 
         assertEquals(FilterState.Loaded(secondFilterList), secondSuccessFilterState)
     }
@@ -131,6 +131,6 @@ class FilterListViewModelTest {
 
         assertEquals(1, events.size)
 
-        assertEquals(FilterListUiEvent.DataLoadingFailure, events.removeFirst())
+        assertEquals(FilterListUiEvent.DataLoadingFailure, events.removeAt(0))
     }
 }
