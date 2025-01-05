@@ -64,4 +64,8 @@
     <string name="notifications">Notifications</string>
     <string name="help">Help</string>
     <string name="delete_filter_confirmation">Delete filter confirmation.</string>
+    <string name="fuzzy">Fuzzy(%1$s): %2$s</string>
+    <string name="fuzzy_search">Fuzzy search</string>
+    <string name="the_fuzzy_search_method_filter_text_within_a_threshold_of_difference_between_the_query_and_the_words_on_text_this_will_evaluate_each_word_on_query_and_text_separately_and_if_all_are_matched_it_will_be_included_on_the_filter_it_s_useful_on_scenarios_with_typos_or_wording_variation">The fuzzy search method filter text within a threshold of difference between the query and the words on text, this will evaluate each word on query and text separately, and if all are matched it will be included on the filter. It\'s useful on scenarios with typos or wording variation.</string>
+    <string name="fuzzy_distance">Fuzzy distance</string>
 </resources>

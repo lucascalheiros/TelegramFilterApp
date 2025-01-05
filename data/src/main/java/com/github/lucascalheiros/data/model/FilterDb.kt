@@ -9,6 +9,7 @@ data class FilterDb(
     val title: String,
     val limitDate: Long,
     val regex: String,
-    val strategy: FilterStrategyDb,
-    val newMessagesCount: Int = 0
+    val type: FilterTypeDb,
+    val newMessagesCount: Int,
+    val fuzzyDistance: Int
 )

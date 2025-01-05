@@ -6,8 +6,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.github.lucascalheiros.data.local.AppDatabase
 import com.github.lucascalheiros.data.repositories.datasources.FilterLocalDataSource
 import com.github.lucascalheiros.domain.model.Filter
-import com.github.lucascalheiros.domain.model.FilterStrategy
-import io.mockk.mockk
+import com.github.lucascalheiros.domain.model.FilterType
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -30,7 +29,7 @@ class FilterRepositoryImplTest {
             context, AppDatabase::class.java
         ).build()
 
-        filterRepositoryImpl = FilterRepositoryImpl(FilterLocalDataSource(db.filterDao()), mockk(relaxed = true))
+        filterRepositoryImpl = FilterRepositoryImpl(FilterLocalDataSource(db.filterDao()))
     }
 
     @After
@@ -47,7 +46,7 @@ class FilterRepositoryImplTest {
 
     @Test
     fun `test data insertion`() = runTest {
-        val filterData = Filter(0L, "Test", listOf("Query"), ".*", listOf(1L), 0L, FilterStrategy.LocalRegexSearch, 0)
+        val filterData = Filter(0L, "Test", listOf("Query"), ".*", listOf(1L), 0L, FilterType.LocalRegexSearch, 0)
 
         val id = filterRepositoryImpl.saveFilter(filterData)
 
@@ -58,7 +57,7 @@ class FilterRepositoryImplTest {
 
     @Test
     fun `test data new message increment`() = runTest {
-        val filterData = Filter(0L, "Test", listOf("Query"), ".*", listOf(1L), 0L, FilterStrategy.LocalRegexSearch, 0)
+        val filterData = Filter(0L, "Test", listOf("Query"), ".*", listOf(1L), 0L, FilterType.LocalRegexSearch, 0)
 
         val id = filterRepositoryImpl.saveFilter(filterData)
 
@@ -73,7 +72,7 @@ class FilterRepositoryImplTest {
 
     @Test
     fun `test data new message reset`() = runTest {
-        val filterData = Filter(0L, "Test", listOf("Query"), ".*", listOf(1L), 0L, FilterStrategy.LocalRegexSearch, 0)
+        val filterData = Filter(0L, "Test", listOf("Query"), ".*", listOf(1L), 0L, FilterType.LocalRegexSearch, 0)
 
         val id = filterRepositoryImpl.saveFilter(filterData)
 
@@ -90,7 +89,7 @@ class FilterRepositoryImplTest {
 
     @Test
     fun `test filter deletion`() = runTest {
-        val filterData = Filter(0L, "Test", listOf("Query"), ".*", listOf(1L), 0L, FilterStrategy.LocalRegexSearch, 0)
+        val filterData = Filter(0L, "Test", listOf("Query"), ".*", listOf(1L), 0L, FilterType.LocalRegexSearch, 0)
 
         val id = filterRepositoryImpl.saveFilter(filterData)
 

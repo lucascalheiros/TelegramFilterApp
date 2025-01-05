@@ -1,7 +1,7 @@
 package com.github.lucascalheiros.telegramfilterapp.mocks
 
 import com.github.lucascalheiros.domain.model.Filter
-import com.github.lucascalheiros.domain.model.FilterStrategy
+import com.github.lucascalheiros.domain.model.FilterType
 
 object FilterMocks {
     fun defaultFilter(): Filter {
@@ -12,7 +12,7 @@ object FilterMocks {
             regex = "",
             chatIds = listOf(1001L, 1002L, 1003L),
             limitDate = 1672531200000L,
-            strategy = FilterStrategy.LocalRegexSearch
+            filterType = FilterType.LocalRegexSearch
         )
     }
 
@@ -24,7 +24,7 @@ object FilterMocks {
             regex = "",
             chatIds = listOf(2001L, 2002L),
             limitDate = 1672531200000L,
-            strategy = FilterStrategy.LocalRegexSearch
+            filterType = FilterType.LocalRegexSearch
         )
     }
 
@@ -36,7 +36,7 @@ object FilterMocks {
             regex = "",
             chatIds = listOf(3001L),
             limitDate = dateLimit,
-            strategy = FilterStrategy.LocalRegexSearch
+            filterType = FilterType.LocalRegexSearch
         )
     }
 
@@ -48,7 +48,7 @@ object FilterMocks {
             regex = "",
             chatIds = emptyList(),
             limitDate = 1672531200000L,
-            strategy = FilterStrategy.LocalRegexSearch
+            filterType = FilterType.LocalRegexSearch
         )
     }
 }

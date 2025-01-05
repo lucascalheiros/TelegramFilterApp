@@ -8,10 +8,12 @@ import com.github.lucascalheiros.data.local.migrations
 import com.github.lucascalheiros.data.repositories.ChatRepositoryImpl
 import com.github.lucascalheiros.data.repositories.FilterRepositoryImpl
 import com.github.lucascalheiros.data.repositories.MessageRepositoryImpl
+import com.github.lucascalheiros.data.repositories.SearchTextRepositoryImpl
 import com.github.lucascalheiros.data.repositories.TelegramSetupRepositoryImpl
 import com.github.lucascalheiros.domain.repositories.ChatRepository
 import com.github.lucascalheiros.domain.repositories.FilterRepository
 import com.github.lucascalheiros.domain.repositories.MessageRepository
+import com.github.lucascalheiros.domain.repositories.SearchTextRepository
 import com.github.lucascalheiros.domain.repositories.TelegramSetupRepository
 import dagger.Binds
 import dagger.Module
@@ -67,4 +69,11 @@ interface TelegramSetupRepositoryBinding {
 interface ChatRepositoryBinding {
     @Binds
     fun bindChatRepository(impl: ChatRepositoryImpl): ChatRepository
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+interface SearchTextRepositoryBinding {
+    @Binds
+    fun bind(impl: SearchTextRepositoryImpl): SearchTextRepository
 }

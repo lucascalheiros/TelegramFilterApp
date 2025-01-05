@@ -43,6 +43,7 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":common"))
     implementation(project(":analytics"))
+    implementation(project(":fuzzysearch"))
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

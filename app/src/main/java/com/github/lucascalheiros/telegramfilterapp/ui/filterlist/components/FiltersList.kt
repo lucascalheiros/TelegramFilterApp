@@ -17,7 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.github.lucascalheiros.domain.model.Filter
-import com.github.lucascalheiros.domain.model.FilterStrategy
+import com.github.lucascalheiros.domain.model.FilterType
 import com.github.lucascalheiros.telegramfilterapp.R
 import com.github.lucascalheiros.telegramfilterapp.notification.channels.ChannelType
 import com.github.lucascalheiros.telegramfilterapp.ui.components.FilterMoreOptionsDropdownMenu
@@ -84,13 +84,18 @@ fun FiltersList(
 
 @Composable
 fun Filter.queryOrRegexFilter(): String {
-    return when (strategy) {
-        FilterStrategy.TelegramQuerySearch -> stringResource(
+    return when (filterType) {
+        FilterType.TelegramQuerySearch -> stringResource(
             R.string.query_supporting_text,
             queries.joinToString(", ")
         )
 
-        FilterStrategy.LocalRegexSearch -> stringResource(R.string.regex_supporting_text, regex)
+        FilterType.LocalRegexSearch -> stringResource(R.string.regex_supporting_text, regex)
+        FilterType.LocalFuzzySearch -> stringResource(
+            R.string.fuzzy,
+            fuzzyDistance,
+            queries.joinToString(", ")
+        )
     }
 }
 
@@ -108,7 +113,7 @@ fun FilterListPreview() {
                     "",
                     listOf(),
                     0,
-                    FilterStrategy.TelegramQuerySearch
+                    FilterType.TelegramQuerySearch
                 ),
                 Filter(
                     1,
@@ -117,7 +122,7 @@ fun FilterListPreview() {
                     ".*",
                     listOf(),
                     0,
-                    FilterStrategy.LocalRegexSearch,
+                    FilterType.LocalRegexSearch,
                     10
                 )
             )

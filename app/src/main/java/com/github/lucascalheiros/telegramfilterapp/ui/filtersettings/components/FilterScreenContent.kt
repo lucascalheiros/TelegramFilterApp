@@ -20,13 +20,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.github.lucascalheiros.domain.model.ChatInfo
 import com.github.lucascalheiros.domain.model.ChatType
-import com.github.lucascalheiros.domain.model.FilterStrategy
 import com.github.lucascalheiros.telegramfilterapp.R
 import com.github.lucascalheiros.telegramfilterapp.ui.components.SettingItem
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.FilterSettingsIntent
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.FilterSettingsUiState
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.components.options.filterdatetime.FilterDateTimeOption
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.components.options.filterstrategy.FilterStrategyOption
+import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.components.options.fuzzydistance.FuzzyDistanceOption
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.components.options.queries.QueriesOption
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.components.options.regex.RegexOption
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.components.options.selectedchats.SelectedChatsOption
@@ -65,20 +65,25 @@ fun FilterScreenContent(
                     dispatch(FilterSettingsIntent.UpdateTitle(it))
                 }
                 HorizontalDivider()
-                FilterStrategyOption(state.strategy) {
+                FilterStrategyOption(state.filterType) {
                     dispatch(FilterSettingsIntent.SetFilterStrategy(it))
                 }
                 HorizontalDivider()
-                AnimatedVisibility(state.strategy == FilterStrategy.TelegramQuerySearch) {
+                AnimatedVisibility(state.hasQueriesOnFilterType) {
                     QueriesOption(
                         state.queries,
                         { dispatch(FilterSettingsIntent.RemoveQuery(it)) },
                         { dispatch(FilterSettingsIntent.AddQuery(it)) }
                     )
                 }
-                AnimatedVisibility(state.strategy == FilterStrategy.LocalRegexSearch) {
+                AnimatedVisibility(state.hasRegexOnFilterType) {
                     RegexOption(state.regex) {
                         dispatch(FilterSettingsIntent.UpdateRegex(it))
+                    }
+                }
+                AnimatedVisibility(state.hasFuzzyDistanceOnFilterType) {
+                    FuzzyDistanceOption(state.fuzzyDistance) {
+                        dispatch(FilterSettingsIntent.UpdateFuzzyDistance(it))
                     }
                 }
                 HorizontalDivider()

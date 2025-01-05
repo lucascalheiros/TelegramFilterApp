@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.github.lucascalheiros.analytics.reporter.AnalyticsReporter
 import com.github.lucascalheiros.common.datetime.toMillis
+import com.github.lucascalheiros.common.log.logDebug
 import com.github.lucascalheiros.domain.model.Filter
 import com.github.lucascalheiros.domain.usecases.GetChatsUseCase
 import com.github.lucascalheiros.domain.usecases.GetFilterUseCase
@@ -64,6 +65,7 @@ class FilterSettingsViewModel @Inject constructor(
     }
 
     private suspend fun intentHandleMiddleware(intent: FilterSettingsIntent) {
+        logDebug("::intentHandleMiddleware $intent")
         val possibleAction: Any = when (intent) {
             FilterSettingsIntent.LoadData -> loadData()
             FilterSettingsIntent.Save -> save()
@@ -91,6 +93,9 @@ class FilterSettingsViewModel @Inject constructor(
 
             is FilterSettingsIntent.UpdateRegex ->
                 FilterSettingsAction.UpdateRegex(intent.regex)
+
+            is FilterSettingsIntent.UpdateFuzzyDistance ->
+                FilterSettingsAction.UpdateFuzzyDistance(intent.distance)
         }
         if (possibleAction is FilterSettingsAction) {
             reduceAction(possibleAction)
@@ -119,7 +124,8 @@ class FilterSettingsViewModel @Inject constructor(
                     regex = state.regex,
                     chatIds = state.selectedChats.map { it.id },
                     limitDate = state.filterDateTime.toMillis(),
-                    strategy = state.strategy
+                    filterType = state.filterType,
+                    fuzzyDistance = state.fuzzyDistance
                 )
             )
             reduceAction(FilterSettingsAction.Close)

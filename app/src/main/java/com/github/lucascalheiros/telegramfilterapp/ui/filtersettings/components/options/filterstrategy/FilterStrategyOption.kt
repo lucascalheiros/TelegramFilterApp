@@ -29,13 +29,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.github.lucascalheiros.domain.model.FilterStrategy
+import com.github.lucascalheiros.domain.model.FilterType
 import com.github.lucascalheiros.telegramfilterapp.R
 import com.github.lucascalheiros.telegramfilterapp.ui.components.SettingItem
 import com.github.lucascalheiros.telegramfilterapp.ui.components.linkify
 
 @Composable
-fun FilterStrategyOption(strategy: FilterStrategy, onSelectStrategy: (FilterStrategy) -> Unit) {
+fun FilterStrategyOption(strategy: FilterType, onSelectStrategy: (FilterType) -> Unit) {
     var menuExpanded by remember { mutableStateOf(false) }
     SettingItem(stringResource(R.string.strategy), { menuExpanded = true }) {
         Box(
@@ -48,43 +48,31 @@ fun FilterStrategyOption(strategy: FilterStrategy, onSelectStrategy: (FilterStra
                     strategy.infoText()
                 )
                 Text(strategy.text(), color = MaterialTheme.colorScheme.primary)
-
             }
             DropdownMenu(
                 expanded = menuExpanded,
                 onDismissRequest = { menuExpanded = false }) {
 
-                DropdownMenuItem(
-                    text = {
-                        Text(FilterStrategy.LocalRegexSearch.text())
-                    },
-                    onClick = {
-                        onSelectStrategy(FilterStrategy.LocalRegexSearch)
-                        menuExpanded = false
-                    },
-                    leadingIcon = {
-                        InfoButtonWithDialog(
-                            FilterStrategy.LocalRegexSearch.text(),
-                            FilterStrategy.LocalRegexSearch.infoText()
-                        )
+                FilterType.entries.forEachIndexed { index, item ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(item.text())
+                        },
+                        onClick = {
+                            onSelectStrategy(item)
+                            menuExpanded = false
+                        },
+                        leadingIcon = {
+                            InfoButtonWithDialog(
+                                item.text(),
+                                item.infoText()
+                            )
+                        }
+                    )
+                    if (FilterType.entries.lastIndex != index) {
+                        HorizontalDivider()
                     }
-                )
-                HorizontalDivider()
-                DropdownMenuItem(
-                    text = {
-                        Text(FilterStrategy.TelegramQuerySearch.text())
-                    },
-                    onClick = {
-                        onSelectStrategy(FilterStrategy.TelegramQuerySearch)
-                        menuExpanded = false
-                    },
-                    leadingIcon = {
-                        InfoButtonWithDialog(
-                            FilterStrategy.TelegramQuerySearch.text(),
-                            FilterStrategy.TelegramQuerySearch.infoText()
-                        )
-                    }
-                )
+                }
             }
         }
     }
@@ -131,17 +119,19 @@ fun InfoButtonWithDialog(
 }
 
 @Composable
-private fun FilterStrategy.text(): String {
+private fun FilterType.text(): String {
     return when (this) {
-        FilterStrategy.LocalRegexSearch -> stringResource(R.string.local_regex)
-        FilterStrategy.TelegramQuerySearch -> stringResource(R.string.telegram_search)
+        FilterType.LocalRegexSearch -> stringResource(R.string.local_regex)
+        FilterType.TelegramQuerySearch -> stringResource(R.string.telegram_search)
+        FilterType.LocalFuzzySearch -> stringResource(R.string.fuzzy_search)
     }
 }
 
 @Composable
-private fun FilterStrategy.infoText(): String {
+private fun FilterType.infoText(): String {
     return when (this) {
-        FilterStrategy.LocalRegexSearch -> stringResource(R.string.info_local_regex).trimMargin()
-        FilterStrategy.TelegramQuerySearch -> stringResource(R.string.info_telegram_search).trimMargin()
+        FilterType.LocalRegexSearch -> stringResource(R.string.info_local_regex).trimMargin()
+        FilterType.TelegramQuerySearch -> stringResource(R.string.info_telegram_search).trimMargin()
+        FilterType.LocalFuzzySearch -> stringResource(R.string.the_fuzzy_search_method_filter_text_within_a_threshold_of_difference_between_the_query_and_the_words_on_text_this_will_evaluate_each_word_on_query_and_text_separately_and_if_all_are_matched_it_will_be_included_on_the_filter_it_s_useful_on_scenarios_with_typos_or_wording_variation).trimMargin()
     }
 }

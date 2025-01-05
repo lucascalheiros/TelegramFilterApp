@@ -30,9 +30,10 @@ class FilterSettingsReducer @Inject constructor() :
                 filterTitle = action.filter.title,
                 queries = action.filter.queries,
                 regex = action.filter.regex,
-                strategy = action.filter.strategy,
+                filterType = action.filter.filterType,
                 selectedChatIds = action.filter.chatIds,
-                filterDateTime = action.filter.limitDate.millisToLocalDateTime()
+                filterDateTime = action.filter.limitDate.millisToLocalDateTime(),
+                fuzzyDistance = action.filter.fuzzyDistance
             )
 
             Close -> state.copy(close = true)
@@ -65,9 +66,11 @@ class FilterSettingsReducer @Inject constructor() :
                 filterDateTime = action.dateTime
             )
 
-            is FilterSettingsAction.SetFilterStrategy -> state.copy(strategy = action.strategy)
+            is FilterSettingsAction.SetFilterStrategy -> state.copy(filterType = action.strategy)
 
             is FilterSettingsAction.UpdateRegex -> state.copy(regex = action.regex)
+
+            is FilterSettingsAction.UpdateFuzzyDistance -> state.copy(fuzzyDistance = action.distance)
         }
     }
 

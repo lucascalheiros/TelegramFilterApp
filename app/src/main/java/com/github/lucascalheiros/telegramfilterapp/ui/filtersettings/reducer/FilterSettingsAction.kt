@@ -2,7 +2,7 @@ package com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer
 
 import com.github.lucascalheiros.domain.model.ChatInfo
 import com.github.lucascalheiros.domain.model.Filter
-import com.github.lucascalheiros.domain.model.FilterStrategy
+import com.github.lucascalheiros.domain.model.FilterType
 import java.time.LocalDateTime
 
 sealed interface FilterSettingsAction {
@@ -15,6 +15,7 @@ sealed interface FilterSettingsAction {
     data class AddSelectedChats(val chatIds: List<Long>): FilterSettingsAction
     data class RemoveChat(val chatId: Long): FilterSettingsAction
     data class SetFilterDateTime(val dateTime: LocalDateTime): FilterSettingsAction
-    data class SetFilterStrategy(val strategy: FilterStrategy): FilterSettingsAction
+    data class SetFilterStrategy(val strategy: FilterType): FilterSettingsAction
     data class UpdateRegex(val regex: String): FilterSettingsAction
+    data class UpdateFuzzyDistance(val distance: Int): FilterSettingsAction
 }

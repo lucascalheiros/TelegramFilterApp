@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.github.lucascalheiros.analytics.reporter.AnalyticsReporter
+import com.github.lucascalheiros.common.log.logDebug
+import com.github.lucascalheiros.common.log.logError
 import com.github.lucascalheiros.domain.usecases.DeleteFilterUseCase
 import com.github.lucascalheiros.domain.usecases.GetFilterUseCase
 import com.github.lucascalheiros.domain.usecases.GetMessagesUseCase
@@ -47,6 +49,7 @@ class FilterMessagesViewModel @Inject constructor(
     }
 
     private suspend fun intentHandleMiddleware(intent: FilterMessagesIntent) {
+        logDebug("::intentHandleMiddleware $intent")
         when (intent) {
             FilterMessagesIntent.LoadData -> loadData()
             FilterMessagesIntent.DeleteFilter -> deleteFilter()
@@ -60,12 +63,17 @@ class FilterMessagesViewModel @Inject constructor(
     }
 
     private suspend fun loadData() {
-        markFilterMessagesAsReadUseCase(filterId)
-        reduceAction(FilterMessagesAction.LoadingMessage)
-        val filter = getFilterUseCase.getFilter(filterId) ?: return
-        reduceAction(FilterMessagesAction.SetFilter(filter))
-        val messages = getMessagesUseCase(filter)
-        reduceAction(FilterMessagesAction.SetMessages(messages))
+        try {
+            markFilterMessagesAsReadUseCase(filterId)
+            reduceAction(FilterMessagesAction.LoadingMessage)
+            val filter = getFilterUseCase.getFilter(filterId) ?: return
+            reduceAction(FilterMessagesAction.SetFilter(filter))
+            val messages = getMessagesUseCase(filter)
+            reduceAction(FilterMessagesAction.SetMessages(messages))
+        } catch (e: Exception) {
+            logError("loadData", e)
+            analyticsReporter.addNonFatalReport(e)
+        }
     }
 
     private suspend fun deleteFilter() {

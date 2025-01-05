@@ -17,7 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.github.lucascalheiros.domain.model.Filter
-import com.github.lucascalheiros.domain.model.FilterStrategy
+import com.github.lucascalheiros.domain.model.FilterType
 import com.github.lucascalheiros.telegramfilterapp.R
 import com.github.lucascalheiros.telegramfilterapp.notification.channels.ChannelType
 import com.github.lucascalheiros.telegramfilterapp.ui.components.FilterMoreOptionsDropdownMenuTestTags.CANCEL_DELETE
@@ -151,7 +151,7 @@ private fun FilterMoreOptionsPreview() {
                 "",
                 listOf(),
                 0,
-                FilterStrategy.TelegramQuerySearch
+                FilterType.TelegramQuerySearch
             )
         ),
         onFilterSettingsClick = {},

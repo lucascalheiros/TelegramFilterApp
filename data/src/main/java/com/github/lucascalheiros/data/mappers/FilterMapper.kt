@@ -1,10 +1,10 @@
 package com.github.lucascalheiros.data.mappers
 
 import com.github.lucascalheiros.data.model.FilterDb
-import com.github.lucascalheiros.data.model.FilterStrategyDb
+import com.github.lucascalheiros.data.model.FilterTypeDb
 import com.github.lucascalheiros.data.model.FilterWithQueriesAndChats
 import com.github.lucascalheiros.domain.model.Filter
-import com.github.lucascalheiros.domain.model.FilterStrategy
+import com.github.lucascalheiros.domain.model.FilterType
 
 fun Filter.toDb(): FilterDb {
     return FilterDb(
@@ -12,8 +12,9 @@ fun Filter.toDb(): FilterDb {
         title = title,
         limitDate = limitDate,
         regex = regex,
-        strategy = strategy.toDb(),
-        newMessagesCount = newMessagesCount
+        type = filterType.toDb(),
+        newMessagesCount = newMessagesCount,
+        fuzzyDistance = fuzzyDistance
     )
 }
 
@@ -25,21 +26,24 @@ fun FilterWithQueriesAndChats.toModel(): Filter {
         chatIds = chats.map { it.chatId },
         limitDate = filterDb.limitDate,
         regex = filterDb.regex,
-        strategy = filterDb.strategy.toModel(),
-        newMessagesCount = filterDb.newMessagesCount
+        filterType = filterDb.type.toModel(),
+        newMessagesCount = filterDb.newMessagesCount,
+        fuzzyDistance = filterDb.fuzzyDistance
     )
 }
 
-fun FilterStrategyDb.toModel(): FilterStrategy {
+fun FilterTypeDb.toModel(): FilterType {
     return when (this) {
-        FilterStrategyDb.TelegramQuerySearch -> FilterStrategy.TelegramQuerySearch
-        FilterStrategyDb.LocalRegexSearch -> FilterStrategy.LocalRegexSearch
+        FilterTypeDb.TelegramQuerySearch -> FilterType.TelegramQuerySearch
+        FilterTypeDb.LocalRegexSearch -> FilterType.LocalRegexSearch
+        FilterTypeDb.LocalFuzzySearch -> FilterType.LocalFuzzySearch
     }
 }
 
-fun FilterStrategy.toDb(): FilterStrategyDb {
+fun FilterType.toDb(): FilterTypeDb {
     return when (this) {
-        FilterStrategy.TelegramQuerySearch -> FilterStrategyDb.TelegramQuerySearch
-        FilterStrategy.LocalRegexSearch -> FilterStrategyDb.LocalRegexSearch
+        FilterType.TelegramQuerySearch -> FilterTypeDb.TelegramQuerySearch
+        FilterType.LocalRegexSearch -> FilterTypeDb.LocalRegexSearch
+        FilterType.LocalFuzzySearch -> FilterTypeDb.LocalFuzzySearch
     }
 }

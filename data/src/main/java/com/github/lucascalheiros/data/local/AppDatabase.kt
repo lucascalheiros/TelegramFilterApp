@@ -14,7 +14,7 @@ import com.github.lucascalheiros.data.model.FilterToQueriesCrossRefDb
         FilterToQueriesCrossRefDb::class,
     ],
     exportSchema = true,
-    version = 6
+    version = 7
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun filterDao(): FilterDao

@@ -1,6 +1,7 @@
 package com.github.lucascalheiros.data.model
 
-enum class FilterStrategyDb {
+enum class FilterTypeDb {
     TelegramQuerySearch,
-    LocalRegexSearch
+    LocalRegexSearch,
+    LocalFuzzySearch
 }

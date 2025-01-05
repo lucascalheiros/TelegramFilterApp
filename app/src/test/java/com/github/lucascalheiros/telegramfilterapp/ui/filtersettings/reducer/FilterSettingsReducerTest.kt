@@ -1,6 +1,6 @@
 package com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer
 
-import com.github.lucascalheiros.domain.model.FilterStrategy
+import com.github.lucascalheiros.domain.model.FilterType
 import com.github.lucascalheiros.telegramfilterapp.mocks.FilterMocks
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.FilterSettingsUiState
 import org.junit.Assert.assertEquals
@@ -11,12 +11,12 @@ class FilterSettingsReducerTest {
 
     @Test
     fun `test reduce with SetFilterStrategy action`() {
-        val initialState = FilterSettingsUiState(strategy = FilterStrategy.TelegramQuerySearch)
-        val action = FilterSettingsAction.SetFilterStrategy(strategy = FilterStrategy.LocalRegexSearch)
+        val initialState = FilterSettingsUiState(filterType = FilterType.TelegramQuerySearch)
+        val action = FilterSettingsAction.SetFilterStrategy(strategy = FilterType.LocalRegexSearch)
 
         val newState = reducer.reduce(initialState, action)
 
-        assertEquals(FilterStrategy.LocalRegexSearch, newState.strategy)
+        assertEquals(FilterType.LocalRegexSearch, newState.filterType)
     }
 
     @Test
@@ -39,7 +39,7 @@ class FilterSettingsReducerTest {
 
         assertEquals(filter.title, newState.filterTitle)
         assertEquals(filter.queries, newState.queries)
-        assertEquals(filter.strategy, newState.strategy)
+        assertEquals(filter.filterType, newState.filterType)
         assertEquals(filter.regex, newState.regex)
         assertEquals(filter.chatIds, newState.selectedChatIds)
     }

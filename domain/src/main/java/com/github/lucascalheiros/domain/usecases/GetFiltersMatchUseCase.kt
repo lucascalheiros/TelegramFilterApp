@@ -9,7 +9,8 @@ import javax.inject.Inject
 
 class GetFiltersMatchUseCase @Inject constructor(
     private val getFilterUseCase: GetFilterUseCase,
-    @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher
+    @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
+    private val hasMatchInTextUseCase: HasMatchInTextUseCase
 ) {
 
     suspend operator fun invoke(message: Message): List<Filter> {
@@ -25,7 +26,7 @@ class GetFiltersMatchUseCase @Inject constructor(
             if (!isFromMonitoredChat) {
                 return@filter false
             }
-            it.hasMatchInText(textToFilter)
+            hasMatchInTextUseCase(textToFilter, it.strategy)
         }
     }
 }

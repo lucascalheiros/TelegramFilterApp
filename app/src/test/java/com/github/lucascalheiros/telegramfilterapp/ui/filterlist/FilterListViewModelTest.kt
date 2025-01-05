@@ -10,6 +10,7 @@ import com.github.lucascalheiros.telegramfilterapp.ui.filterlist.reducer.FilterL
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
+import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
@@ -37,9 +38,6 @@ class FilterListViewModelTest {
     @MockK
     lateinit var logoutUseCase: LogoutUseCase
 
-    @MockK
-    lateinit var analyticsReporter: AnalyticsReporter
-
     lateinit var viewModel: FilterListViewModel
 
     @Before
@@ -51,7 +49,8 @@ class FilterListViewModelTest {
             FilterListReducer(),
             deleteFilterUseCase,
             logoutUseCase,
-            analyticsReporter
+            mockk(relaxed = true),
+            mockk(relaxed = true)
         )
     }
 

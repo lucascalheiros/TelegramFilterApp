@@ -11,6 +11,7 @@ import com.github.lucascalheiros.domain.usecases.SendSetupPasswordUseCase
 import com.github.lucascalheiros.telegramfilterapp.ui.telegramsetup.reducer.TelegramSetupAction
 import com.github.lucascalheiros.telegramfilterapp.ui.telegramsetup.reducer.TelegramSetupReducer
 import com.github.lucascalheiros.analytics.reporter.AnalyticsReporter
+import com.github.lucascalheiros.common.log.logDebug
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.coroutineScope
@@ -54,6 +55,7 @@ class TelegramSetupViewModel @Inject constructor(
     }
 
     private suspend fun intentHandleMiddleware(intent: TelegramSetupIntent) {
+        logDebug("::intentHandleMiddleware $intent")
         val possibleAction: Any = when (intent) {
             TelegramSetupIntent.NextStep -> nextStep()
 

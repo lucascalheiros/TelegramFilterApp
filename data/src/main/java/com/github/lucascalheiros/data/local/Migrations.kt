@@ -29,9 +29,17 @@ val MIGRATION_5_6 = object : Migration(5, 6) {
     }
 }
 
+val MIGRATION_6_7 = object : Migration(6, 7) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("alter table FilterDb rename column strategy to type")
+        db.execSQL("alter table FilterDb add column fuzzyDistance INTEGER not null default 1")
+    }
+}
+
 val migrations = arrayOf(
     MIGRATION_1_2,
     MIGRATION_3_4,
     MIGRATION_4_5,
-    MIGRATION_5_6
+    MIGRATION_5_6,
+    MIGRATION_6_7
 )

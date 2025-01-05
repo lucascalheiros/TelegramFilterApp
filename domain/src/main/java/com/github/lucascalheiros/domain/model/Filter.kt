@@ -10,13 +10,15 @@ data class Filter(
     val regex: String,
     val chatIds: List<Long>,
     val limitDate: Long,
-    val strategy: FilterStrategy,
-    val newMessagesCount: Int = 0
+    val filterType: FilterType,
+    val newMessagesCount: Int = 0,
+    val fuzzyDistance: Int = 1
 ) {
-    fun hasMatchInText(text: String): Boolean {
-        return when (strategy) {
-            FilterStrategy.TelegramQuerySearch -> queries.all { text.contains(it, ignoreCase = true) }
-            FilterStrategy.LocalRegexSearch -> Regex(regex).containsMatchIn(text)
+    val strategy: FilterStrategy by lazy {
+        when (filterType) {
+            FilterType.TelegramQuerySearch -> FilterStrategy.TelegramQuery(queries)
+            FilterType.LocalRegexSearch -> FilterStrategy.LocalRegex(regex)
+            FilterType.LocalFuzzySearch -> FilterStrategy.LocalFuzzy(queries, fuzzyDistance)
         }
     }
 }

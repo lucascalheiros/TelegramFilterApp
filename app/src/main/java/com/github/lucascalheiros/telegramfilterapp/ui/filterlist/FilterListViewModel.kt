@@ -3,6 +3,7 @@ package com.github.lucascalheiros.telegramfilterapp.ui.filterlist
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.lucascalheiros.analytics.reporter.AnalyticsReporter
+import com.github.lucascalheiros.common.log.logDebug
 import com.github.lucascalheiros.common.log.logError
 import com.github.lucascalheiros.domain.usecases.DeleteFilterUseCase
 import com.github.lucascalheiros.domain.usecases.GetFilterUseCase
@@ -47,6 +48,7 @@ class FilterListViewModel @Inject constructor(
     }
 
     private suspend fun intentHandleMiddleware(intent: FilterListIntent) {
+        logDebug("::intentHandleMiddleware $intent")
         when (intent) {
             FilterListIntent.LoadData -> loadData()
 
