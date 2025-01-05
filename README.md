@@ -5,19 +5,22 @@
 ![Kotlin](https://img.shields.io/badge/kotlin-2.1.0-blue.svg?logo=kotlin)
 ![Android](https://img.shields.io/badge/Android-yellow?logo=Android)
 
-This is an utilitary app built with [TdLib](https://core.telegram.org/tdlib) to filter messages and emmit notifications based on a custom criteria defined by the user.
+This is a utility app built with [TdLib](https://core.telegram.org/tdlib) to filter messages and emit notifications based on custom criteria defined by the user.
 
-The ideia for this app started just as a desire to filter some black friday deals from deals channels from telegram. Initially the idea was to create a Filter Bot, unfortunately the Bot's are unable to subscribe to channels
-and access messages, so the idea for a filter companion app emerged, this is a fairly simple app, but well constructed and architected a part of my showcase projects (checkout for a different architecture and tech stack https://github.com/lucascalheiros/Showcase-App-WaterReminder)
+The idea for this app originated from a desire to filter Black Friday deals from Telegram deals channels. Initially, the plan was to create a Filter Bot; however, Telegram bots cannot subscribe to channels or access messages. This limitation led to the development of a filter companion app. While this is a relatively simple app, it is well-constructed and architected as part of my showcase projects. (Check out a different architecture and tech stack in this project: [Showcase-App-WaterReminder](https://github.com/lucascalheiros/Showcase-App-WaterReminder).)
 
 ## Build
 
-To build this application properly you will need to have:
+To build this application properly, you will need the following:
 
-* **Valid SetTdlibParameters**: Follow the instructions on https://core.telegram.org/api/obtaining_api_id to obtain an api_id, and set the required parameters from this file `data/src/main/java/com/github/lucascalheiros/data/frameworks/telegram/SetTdlibParameters.kt`
-* **Google Services json**: You will need to setup a firebase project following this guide https://firebase.google.com/docs/android/setup#console to replace `app/google-services.json`
+1. **Valid `SetTdlibParameters`**  
+   Follow the instructions at [Telegram API Documentation](https://core.telegram.org/api/obtaining_api_id) to obtain an `api_id` and configure the required parameters in the file:  
+   `data/src/main/java/com/github/lucascalheiros/data/frameworks/telegram/SetTdlibParameters.kt`.
 
-After that you may as well provide the FCM credential to the app you created on the telegram setup https://my.telegram.org/apps and then just press the run button on the Android Studio.
+2. **Google Services JSON**  
+   Set up a Firebase project by following [this guide](https://firebase.google.com/docs/android/setup#console), and replace the `app/google-services.json` file with the one from your Firebase project.
+
+After completing these steps, provide the FCM credential for the app you created during the Telegram setup at [My Telegram Apps](https://my.telegram.org/apps). Once configured, press the **Run** button in Android Studio to launch the app.
 
 ## Technologies
 
