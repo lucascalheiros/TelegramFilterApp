@@ -8,7 +8,7 @@ object MessageMocks {
             id = 1L,
             content = "Default Message",
             date = 20240101,
-            sender = "User1"
+            chatTitle = "User1"
         )
     }
 
@@ -17,7 +17,7 @@ object MessageMocks {
             id = 2L,
             content = "Message from $sender",
             date = 20240102,
-            sender = sender
+            chatTitle = sender
         )
     }
 
@@ -26,7 +26,7 @@ object MessageMocks {
             id = 3L,
             content = content,
             date = 20240103,
-            sender = "User2"
+            chatTitle = "User2"
         )
     }
 
@@ -35,7 +35,7 @@ object MessageMocks {
             id = 4L,
             content = "Message for specific date",
             date = date,
-            sender = "User3"
+            chatTitle = "User3"
         )
     }
 }

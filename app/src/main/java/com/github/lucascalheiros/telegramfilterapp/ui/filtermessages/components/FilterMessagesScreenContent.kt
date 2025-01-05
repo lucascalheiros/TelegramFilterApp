@@ -106,7 +106,7 @@ fun FilterMessagesScreenContent(
                 items(state.messages, { it.id }) {
                     Card(Modifier.padding(16.dp)) {
                         Column(Modifier.padding(8.dp)) {
-                            Text(it.sender, style = MaterialTheme.typography.titleMedium)
+                            Text(it.chatTitle, style = MaterialTheme.typography.titleMedium)
                             Spacer(Modifier.height(8.dp))
                             SelectionContainer {
                                 Text(it.content.linkify())

@@ -40,6 +40,12 @@ class MainActivityInitialRedirectTest {
 
     @BindValue @JvmField
     val telegramSetupRepository: TelegramSetupRepository = object : TelegramSetupRepository {
+        override fun setup() {
+        }
+
+        override fun updatePnToken(token: String) {
+        }
+
         override fun authorizationStep(): Flow<AuthorizationStep?> {
             return stepFlow
         }
