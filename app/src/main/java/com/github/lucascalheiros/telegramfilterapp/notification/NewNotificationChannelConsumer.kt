@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
+import com.github.lucascalheiros.analytics.reporter.AnalyticsReporter
 import com.github.lucascalheiros.common.di.IoDispatcher
 import com.github.lucascalheiros.domain.model.Message
 import com.github.lucascalheiros.domain.notifications.NewNotificationChannel
@@ -19,6 +20,7 @@ import com.github.lucascalheiros.telegramfilterapp.notification.channels.Channel
 import com.github.lucascalheiros.telegramfilterapp.notification.channels.ChannelType
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -29,10 +31,13 @@ class NewNotificationChannelConsumer @Inject constructor(
     private val incrementFilterNewMessageUseCase: IncrementFilterNewMessageUseCase,
     private val getFiltersMatchUseCase: GetFiltersMatchUseCase,
     private val newNotificationChannel: NewNotificationChannel,
-    @IoDispatcher private val dispatcher: CoroutineDispatcher
+    @IoDispatcher private val dispatcher: CoroutineDispatcher,
+    private val analyticsReporter: AnalyticsReporter
 )  {
 
-    fun consume() = CoroutineScope(dispatcher).launch {
+    fun consume() = CoroutineScope(dispatcher).launch(CoroutineExceptionHandler { _, throwable ->
+        analyticsReporter.addNonFatalReport(throwable)
+    }) {
         for (message in newNotificationChannel.channel) {
             consume(message)
         }
