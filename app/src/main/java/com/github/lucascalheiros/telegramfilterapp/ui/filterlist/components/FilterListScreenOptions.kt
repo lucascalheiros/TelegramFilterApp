@@ -12,6 +12,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.github.lucascalheiros.telegramfilterapp.R
@@ -22,7 +24,10 @@ import com.github.lucascalheiros.telegramfilterapp.ui.util.openNotificationSetti
 fun FilterListScreenOptions(onHelp: () -> Unit, onLogout: () -> Unit) {
     var isMoreOptionsExpanded by remember { mutableStateOf(false) }
 
-    IconButton({ isMoreOptionsExpanded = true }) {
+    IconButton(
+        onClick = { isMoreOptionsExpanded = true },
+        modifier = Modifier.testTag(FilterListScreenOptionsTestFlags.FILTER_LIST_SCREEN_MORE_TAG)
+    ) {
         Icon(painterResource(R.drawable.ic_more_vert), stringResource(R.string.more))
     }
 
@@ -38,7 +43,8 @@ fun FilterListScreenOptions(onHelp: () -> Unit, onLogout: () -> Unit) {
     }
     DropdownMenu(
         expanded = isMoreOptionsExpanded,
-        onDismissRequest = { isMoreOptionsExpanded = false }
+        onDismissRequest = { isMoreOptionsExpanded = false },
+        modifier = Modifier.testTag(FilterListScreenOptionsTestFlags.FILTER_LIST_SCREEN_MORE_DROPDOWN_TAG)
     ) {
         HelpMenuItem(onHelp)
         HorizontalDivider()
@@ -56,7 +62,8 @@ private fun HelpMenuItem(onClick: () -> Unit) {
     DropdownMenuItem(
         text = { Text(stringResource(R.string.help)) },
         onClick = onClick,
-        leadingIcon = { Icon(painterResource(R.drawable.ic_help), null) }
+        leadingIcon = { Icon(painterResource(R.drawable.ic_help), null) },
+        modifier = Modifier.testTag(FilterListScreenOptionsTestFlags.FILTER_LIST_SCREEN_HELP_TAG)
     )
 }
 
@@ -65,7 +72,8 @@ private fun NotificationSettingsMenuItem(onClick: () -> Unit) {
     DropdownMenuItem(
         text = { Text(stringResource(R.string.notifications)) },
         onClick = onClick,
-        leadingIcon = { Icon(painterResource(R.drawable.ic_notifications), null) }
+        leadingIcon = { Icon(painterResource(R.drawable.ic_notifications), null) },
+        modifier = Modifier.testTag(FilterListScreenOptionsTestFlags.FILTER_LIST_SCREEN_NOTIFICATIONS_TAG)
     )
 }
 
@@ -74,7 +82,8 @@ private fun LogoutMenuItem(onClick: () -> Unit) {
     DropdownMenuItem(
         text = { Text(stringResource(R.string.logout)) },
         onClick = onClick,
-        leadingIcon = { Icon(painterResource(R.drawable.ic_logout), null) }
+        leadingIcon = { Icon(painterResource(R.drawable.ic_logout), null) },
+        modifier = Modifier.testTag(FilterListScreenOptionsTestFlags.FILTER_LIST_SCREEN_LOGOUT_TAG)
     )
 }
 
@@ -84,9 +93,29 @@ private fun LogoutConfirmationAlert(onCancel: () -> Unit, onConfirm: () -> Unit)
         title = { Text(stringResource(R.string.logout)) },
         content = { Text(stringResource(R.string.the_current_filters_will_be_deleted_on_logout_to_proceed_press_yes)) },
         actions = {
-            TextButton(onCancel) { Text(stringResource(R.string.cancel)) }
-            TextButton(onConfirm) { Text(stringResource(R.string.logout)) }
+            TextButton(
+                onClick = onCancel,
+                modifier = Modifier.testTag(FilterListScreenOptionsTestFlags.FILTER_LIST_SCREEN_LOGOUT_DIALOG_CANCEL_TAG)
+            ) { Text(stringResource(R.string.cancel)) }
+            TextButton(
+                onClick = onConfirm,
+                modifier = Modifier.testTag(FilterListScreenOptionsTestFlags.FILTER_LIST_SCREEN_LOGOUT_DIALOG_CONFIRM_TAG)
+            ) { Text(stringResource(R.string.logout)) }
         },
-        onDismissRequest = onCancel
+        onDismissRequest = onCancel,
+        modifier = Modifier.testTag(FilterListScreenOptionsTestFlags.FILTER_LIST_SCREEN_LOGOUT_DIALOG_TAG)
     )
+}
+
+object FilterListScreenOptionsTestFlags {
+    const val FILTER_LIST_SCREEN_MORE_TAG = "FILTER_LIST_SCREEN_MORE_TAG"
+    const val FILTER_LIST_SCREEN_MORE_DROPDOWN_TAG = "FILTER_LIST_SCREEN_MORE_DROPDOWN_TAG"
+    const val FILTER_LIST_SCREEN_HELP_TAG = "FILTER_LIST_SCREEN_HELP_TAG"
+    const val FILTER_LIST_SCREEN_LOGOUT_TAG = "FILTER_LIST_SCREEN_LOGOUT_TAG"
+    const val FILTER_LIST_SCREEN_LOGOUT_DIALOG_TAG = "FILTER_LIST_SCREEN_LOGOUT_TAG"
+    const val FILTER_LIST_SCREEN_LOGOUT_DIALOG_CONFIRM_TAG =
+        "FILTER_LIST_SCREEN_LOGOUT_DIALOG_CONFIRM_TAG"
+    const val FILTER_LIST_SCREEN_LOGOUT_DIALOG_CANCEL_TAG =
+        "FILTER_LIST_SCREEN_LOGOUT_DIALOG_CANCEL_TAG"
+    const val FILTER_LIST_SCREEN_NOTIFICATIONS_TAG = "FILTER_LIST_SCREEN_NOTIFICATIONS_TAG"
 }
