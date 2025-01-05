@@ -19,6 +19,7 @@ kotlin {
 }
 
 dependencies {
+    implementation(project(":common"))
     implementation(libs.kotlin.coroutines)
     implementation(libs.serialization.json)
     implementation(libs.dagger)

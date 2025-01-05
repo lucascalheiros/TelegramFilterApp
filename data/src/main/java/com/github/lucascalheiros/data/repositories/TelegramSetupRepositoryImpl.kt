@@ -16,6 +16,13 @@ import javax.inject.Inject
 class TelegramSetupRepositoryImpl @Inject constructor(
     private val telegramClientWrapper: TelegramClientWrapper
 ): TelegramSetupRepository {
+    override fun setup() {
+        telegramClientWrapper.setup()
+    }
+
+    override fun updatePnToken(token: String) {
+        telegramClientWrapper.updatePnToken(token)
+    }
 
     override fun authorizationStep(): Flow<AuthorizationStep?> {
         return telegramClientWrapper.currentAuthState.map { tdState ->

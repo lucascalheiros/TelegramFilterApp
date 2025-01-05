@@ -4,6 +4,8 @@ import com.github.lucascalheiros.domain.model.AuthorizationStep
 import kotlinx.coroutines.flow.Flow
 
 interface TelegramSetupRepository {
+    fun setup()
+    fun updatePnToken(token: String)
     fun authorizationStep(): Flow<AuthorizationStep?>
     suspend fun sendNumber(data: String)
     suspend fun sendCode(data: String)
