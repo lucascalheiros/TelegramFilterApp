@@ -8,25 +8,37 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
-import com.github.lucascalheiros.data.notification.FilteredNotificationEmitter
-import com.github.lucascalheiros.domain.model.Filter
+import com.github.lucascalheiros.common.di.IoDispatcher
 import com.github.lucascalheiros.domain.model.Message
-import com.github.lucascalheiros.domain.usecases.GetFilterUseCase
+import com.github.lucascalheiros.domain.notifications.NewNotificationChannel
+import com.github.lucascalheiros.domain.usecases.GetFiltersMatchUseCase
 import com.github.lucascalheiros.domain.usecases.IncrementFilterNewMessageUseCase
 import com.github.lucascalheiros.telegramfilterapp.ui.MainActivity
 import com.github.lucascalheiros.telegramfilterapp.R
 import com.github.lucascalheiros.telegramfilterapp.notification.channels.ChannelSyncHelper
 import com.github.lucascalheiros.telegramfilterapp.notification.channels.ChannelType
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class FilteredNotificationEmitterImpl @Inject constructor(
+class NewNotificationChannelConsumer @Inject constructor(
     private val channelSyncHelper: ChannelSyncHelper,
-    private val getFilterUseCase: GetFilterUseCase,
     @ApplicationContext private val context: Context,
-    private val incrementFilterNewMessageUseCase: IncrementFilterNewMessageUseCase
-) : FilteredNotificationEmitter {
-    override suspend fun onMessage(message: Message, filters: List<Filter>) {
+    private val incrementFilterNewMessageUseCase: IncrementFilterNewMessageUseCase,
+    private val getFiltersMatchUseCase: GetFiltersMatchUseCase,
+    private val newNotificationChannel: NewNotificationChannel,
+    @IoDispatcher private val dispatcher: CoroutineDispatcher
+)  {
+
+    fun consume() = CoroutineScope(dispatcher).launch {
+        for (message in newNotificationChannel.channel) {
+            consume(message)
+        }
+    }
+
+    private suspend fun consume(message: Message) {
         if (ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.POST_NOTIFICATIONS
@@ -34,7 +46,9 @@ class FilteredNotificationEmitterImpl @Inject constructor(
         ) {
             return
         }
-        channelSyncHelper.syncChannels(getFilterUseCase.getFilters())
+        val filters = getFiltersMatchUseCase(message)
+        // Ensure channels created
+        channelSyncHelper.createChannels(filters)
         filters.forEach { filter ->
             incrementFilterNewMessageUseCase(filter.id)
 

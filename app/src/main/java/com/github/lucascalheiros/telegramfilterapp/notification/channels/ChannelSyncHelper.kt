@@ -19,6 +19,12 @@ class ChannelSyncHelper @Inject constructor(
         context.syncFilterChannels(channels)
     }
 
+    fun createChannels(filters: List<Filter>) {
+        val channels = channelsForFilters(filters)
+        val notificationManager = context.getSystemService(NotificationManager::class.java)
+        channels.forEach(notificationManager::createChannelFor)
+    }
+
     private fun channelsForFilters(filters: List<Filter>): List<ChannelType> {
         return filters.map { ChannelType.FilteredMessage(it) }
     }

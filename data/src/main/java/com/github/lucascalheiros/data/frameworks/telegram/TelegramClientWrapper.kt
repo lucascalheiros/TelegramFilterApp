@@ -3,9 +3,14 @@ package com.github.lucascalheiros.data.frameworks.telegram
 import android.content.Context
 import com.github.lucascalheiros.analytics.reporter.AnalyticsReporter
 import com.github.lucascalheiros.common.di.IoDispatcher
+import com.github.lucascalheiros.common.log.logDebug
+import com.github.lucascalheiros.common.log.logError
+import com.github.lucascalheiros.data.notification.NewNotificationChannelImpl
+import com.github.lucascalheiros.domain.model.Message
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,16 +22,12 @@ import org.drinkless.tdlib.TdApi
 import org.drinkless.tdlib.TdApi.RegisterDevice
 import javax.inject.Inject
 import javax.inject.Singleton
-import com.github.lucascalheiros.common.log.logDebug
-import com.github.lucascalheiros.common.log.logError
-import com.github.lucascalheiros.data.notification.NotificationFilterHandler
-import kotlinx.coroutines.CoroutineExceptionHandler
 
 @Singleton
 class TelegramClientWrapper @Inject constructor(
     @ApplicationContext private val context: Context,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    private val notificationFilterHandler: NotificationFilterHandler,
+    private val newNotificationMessageChannelImpl: NewNotificationChannelImpl,
     private val analyticsReporter: AnalyticsReporter
 ) {
 
@@ -74,15 +75,16 @@ class TelegramClientWrapper @Inject constructor(
         return telegramClient!!.send(query)
     }
 
-    fun onNewToken(token: String) {
+    fun updatePnToken(token: String? = null) {
         setup()
         CoroutineScope(ioDispatcher).launch(
             CoroutineExceptionHandler { _, throwable ->
                 analyticsReporter.addNonFatalReport(throwable)
             }
         ) {
+            val pnToken = token ?: FirebaseMessaging.getInstance().token.await()
             val deviceTokenFirebaseCloudMessaging = RegisterDevice(
-                TdApi.DeviceTokenFirebaseCloudMessaging(token, false),
+                TdApi.DeviceTokenFirebaseCloudMessaging(pnToken, false),
                 longArrayOf()
             )
             send(deviceTokenFirebaseCloudMessaging)
@@ -101,18 +103,7 @@ class TelegramClientWrapper @Inject constructor(
                 send(setTdlibParameters(context))
             }
 
-            is TdApi.AuthorizationStateReady -> CoroutineScope(ioDispatcher).launch(
-                CoroutineExceptionHandler { _, throwable ->
-                    analyticsReporter.addNonFatalReport(throwable)
-                }
-            ) {
-                val token = FirebaseMessaging.getInstance().token.await()
-                val deviceTokenFirebaseCloudMessaging = RegisterDevice(
-                    TdApi.DeviceTokenFirebaseCloudMessaging(token, false),
-                    longArrayOf()
-                )
-                send(deviceTokenFirebaseCloudMessaging)
-            }
+            is TdApi.AuthorizationStateReady -> updatePnToken()
 
             is TdApi.AuthorizationStateClosed -> {
                 telegramClient = null
@@ -122,18 +113,25 @@ class TelegramClientWrapper @Inject constructor(
     }
 
     private fun handle(state: TdApi.UpdateNewMessage) {
-        val message = state.message
-        val chat = getChat(message.chatId)
+        val messageTd = state.message
+        val chat = getChat(messageTd.chatId)
         if (chat == null) {
-            logDebug("chat not found from message $message")
+            logDebug("chat not found from message $messageTd")
             return
         }
-        if (message.isOutgoing) {
-            logDebug("message outgoing $message")
+        if (messageTd.isOutgoing) {
+            logDebug("message outgoing $messageTd")
             return
         }
-        logDebug("message received, proceeding to filter $message")
-        notificationFilterHandler.handleNotification(message, chat)
+        logDebug("message received, proceeding to filter $messageTd")
+        val message = Message(
+            messageTd.id,
+            messageTd.content.textContent(),
+            messageTd.date,
+            chat.title,
+            messageTd.chatId
+        )
+        newNotificationMessageChannelImpl.emit(message)
     }
 
     private fun handle(state: TdApi.UpdateNewChat) {

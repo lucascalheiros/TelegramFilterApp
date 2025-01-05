@@ -1,6 +1,5 @@
 package com.github.lucascalheiros.data.local
 
-import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.github.lucascalheiros.data.local.dao.FilterDao

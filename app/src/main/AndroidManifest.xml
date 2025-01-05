@@ -27,7 +27,7 @@
         </activity>
 
         <service
-            android:name="com.github.lucascalheiros.data.notification.MessagingService"
+            android:name=".notification.MessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

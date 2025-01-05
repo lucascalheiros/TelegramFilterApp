@@ -1,7 +1,7 @@
 package com.github.lucascalheiros.data.repositories
 
 import com.github.lucascalheiros.data.mappers.toDb
-import com.github.lucascalheiros.data.notification.FilterDataChangeHandler
+import com.github.lucascalheiros.data.notification.FilterDataChangeChannelImpl
 import com.github.lucascalheiros.data.repositories.datasources.FilterLocalDataSource
 import com.github.lucascalheiros.domain.model.Filter
 import com.github.lucascalheiros.domain.repositories.FilterRepository
@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 class FilterRepositoryImpl @Inject constructor(
     private val filterLocalDataSource: FilterLocalDataSource,
-    private val filterDataChangeHandler: FilterDataChangeHandler
+    private val filterDataChangeChannel: FilterDataChangeChannelImpl
 ): FilterRepository {
 
     override suspend fun getFilters(): List<Filter> {
@@ -27,13 +27,13 @@ class FilterRepositoryImpl @Inject constructor(
             chatIds = filter.chatIds,
             queries = filter.queries
         )
-        filterDataChangeHandler.onFilterDataChanged(getFilters())
+        filterDataChangeChannel.emit()
         return id
     }
 
     override suspend fun deleteFilter(id: Long) {
         filterLocalDataSource.deleteFilter(id)
-        filterDataChangeHandler.onFilterDataChanged(getFilters())
+        filterDataChangeChannel.emit()
     }
 
     override suspend fun incrementNewMessage(id: Long) {
