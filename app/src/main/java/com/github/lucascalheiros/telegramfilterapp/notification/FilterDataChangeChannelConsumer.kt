@@ -23,18 +23,30 @@ class FilterDataChangeChannelConsumer @Inject constructor(
     private val analyticsReporter: AnalyticsReporter
 ) {
 
+    private var lastSync = 0L
+
     fun consume() = CoroutineScope(dispatcher).launch(CoroutineExceptionHandler { _, throwable ->
         analyticsReporter.addNonFatalReport(throwable)
     }) {
         var job: Job? = null
         for (event in filterDataChangeChannel.channel) {
-            // Debounce behavior
+            // Debounce like behavior
             job?.cancel()
             job = launch {
-                delay(5_000)
-                channelSyncHelper.syncChannels(getFilterUseCase.getFilters())
+                delay(delayTime())
+                doSync()
             }
         }
+    }
+
+    private fun delayTime(minimalDelaySinceLastSync: Long = 2_000): Long {
+        val currentTime = System.currentTimeMillis()
+        return (minimalDelaySinceLastSync + lastSync - currentTime).coerceAtLeast(0)
+    }
+
+    private suspend fun doSync() {
+        channelSyncHelper.syncChannels(getFilterUseCase.getFilters())
+        lastSync = System.currentTimeMillis()
     }
 
 }
