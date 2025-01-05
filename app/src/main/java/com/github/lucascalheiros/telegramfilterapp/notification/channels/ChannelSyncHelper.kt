@@ -25,6 +25,16 @@ class ChannelSyncHelper @Inject constructor(
         channels.forEach(notificationManager::createChannelFor)
     }
 
+    fun deleteChannelByFilterId(filterId: Long) {
+        val notificationManager = context.getSystemService(NotificationManager::class.java)
+        val prefix = ChannelType.FilteredMessage.channelIdPrefix(filterId)
+        notificationManager.notificationChannels.forEach {
+            if (it.id.startsWith(prefix)) {
+                notificationManager.deleteNotificationChannel(it.id)
+            }
+        }
+    }
+
     private fun channelsForFilters(filters: List<Filter>): List<ChannelType> {
         return filters.map { ChannelType.FilteredMessage(it) }
     }

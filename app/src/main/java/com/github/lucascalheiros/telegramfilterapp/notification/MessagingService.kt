@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 /**
  * Service complying with td lib architecture, notification will be received by TdApi.UpdateNewMessage
- * rather than directly from onMessageReceived please check [NewNotificationChannelConsumer] if you
+ * rather than directly from onMessageReceived please check [NewMessagesCollector] if you
  * want to check the notification will be triggered.
  * The firebase messaging service will only ensure that the TdLib is properly initialized.
  */

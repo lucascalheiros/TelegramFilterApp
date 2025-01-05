@@ -11,8 +11,8 @@ import androidx.core.app.NotificationManagerCompat
 import com.github.lucascalheiros.analytics.reporter.AnalyticsReporter
 import com.github.lucascalheiros.common.di.IoDispatcher
 import com.github.lucascalheiros.domain.model.Message
-import com.github.lucascalheiros.domain.notifications.NewNotificationChannel
 import com.github.lucascalheiros.domain.usecases.GetFiltersMatchUseCase
+import com.github.lucascalheiros.domain.usecases.GetNewMessagesUseCase
 import com.github.lucascalheiros.domain.usecases.IncrementFilterNewMessageUseCase
 import com.github.lucascalheiros.telegramfilterapp.ui.MainActivity
 import com.github.lucascalheiros.telegramfilterapp.R
@@ -25,25 +25,25 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class NewNotificationChannelConsumer @Inject constructor(
+class NewMessagesCollector @Inject constructor(
     private val channelSyncHelper: ChannelSyncHelper,
     @ApplicationContext private val context: Context,
     private val incrementFilterNewMessageUseCase: IncrementFilterNewMessageUseCase,
     private val getFiltersMatchUseCase: GetFiltersMatchUseCase,
-    private val newNotificationChannel: NewNotificationChannel,
+    private val getNewMessagesUseCase: GetNewMessagesUseCase,
     @IoDispatcher private val dispatcher: CoroutineDispatcher,
     private val analyticsReporter: AnalyticsReporter
 )  {
 
-    fun consume() = CoroutineScope(dispatcher).launch(CoroutineExceptionHandler { _, throwable ->
+    fun collect() = CoroutineScope(dispatcher).launch(CoroutineExceptionHandler { _, throwable ->
         analyticsReporter.addNonFatalReport(throwable)
     }) {
-        for (message in newNotificationChannel.channel) {
-            consume(message)
+        getNewMessagesUseCase().collect {
+            onMessage(it)
         }
     }
 
-    private suspend fun consume(message: Message) {
+    private suspend fun onMessage(message: Message) {
         if (ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.POST_NOTIFICATIONS

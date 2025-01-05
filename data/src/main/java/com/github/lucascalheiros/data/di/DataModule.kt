@@ -5,14 +5,10 @@ import androidx.room.Room
 import com.github.lucascalheiros.data.local.AppDatabase
 import com.github.lucascalheiros.data.local.dao.FilterDao
 import com.github.lucascalheiros.data.local.migrations
-import com.github.lucascalheiros.data.notification.FilterDataChangeChannelImpl
-import com.github.lucascalheiros.data.notification.NewNotificationChannelImpl
 import com.github.lucascalheiros.data.repositories.ChatRepositoryImpl
 import com.github.lucascalheiros.data.repositories.FilterRepositoryImpl
 import com.github.lucascalheiros.data.repositories.MessageRepositoryImpl
 import com.github.lucascalheiros.data.repositories.TelegramSetupRepositoryImpl
-import com.github.lucascalheiros.domain.notifications.FilterDataChangeChannel
-import com.github.lucascalheiros.domain.notifications.NewNotificationChannel
 import com.github.lucascalheiros.domain.repositories.ChatRepository
 import com.github.lucascalheiros.domain.repositories.FilterRepository
 import com.github.lucascalheiros.domain.repositories.MessageRepository
@@ -71,18 +67,4 @@ interface TelegramSetupRepositoryBinding {
 interface ChatRepositoryBinding {
     @Binds
     fun bindChatRepository(impl: ChatRepositoryImpl): ChatRepository
-}
-
-@Module
-@InstallIn(SingletonComponent::class)
-interface NotificationEmitter {
-    @Binds
-    fun bind(impl: NewNotificationChannelImpl): NewNotificationChannel
-}
-
-@Module
-@InstallIn(SingletonComponent::class)
-interface FilterChangeEmitter {
-    @Binds
-    fun bind(impl: FilterDataChangeChannelImpl): FilterDataChangeChannel
 }

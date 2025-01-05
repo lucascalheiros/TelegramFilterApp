@@ -5,13 +5,14 @@ import com.github.lucascalheiros.analytics.reporter.AnalyticsReporter
 import com.github.lucascalheiros.common.di.IoDispatcher
 import com.github.lucascalheiros.common.log.logDebug
 import com.github.lucascalheiros.common.log.logError
-import com.github.lucascalheiros.data.notification.NewNotificationChannelImpl
 import com.github.lucascalheiros.domain.model.Message
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -27,7 +28,6 @@ import javax.inject.Singleton
 class TelegramClientWrapper @Inject constructor(
     @ApplicationContext private val context: Context,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    private val newNotificationMessageChannelImpl: NewNotificationChannelImpl,
     private val analyticsReporter: AnalyticsReporter
 ) {
 
@@ -38,6 +38,8 @@ class TelegramClientWrapper @Inject constructor(
 
     private val _chats = MutableStateFlow<Map<Long, TdApi.Chat>>(mapOf())
     val chats = _chats.asStateFlow()
+
+    val newMessagesChannel = Channel<Message>(200, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
     fun getChat(id: Long): TdApi.Chat? {
         return chats.value[id]
@@ -131,7 +133,9 @@ class TelegramClientWrapper @Inject constructor(
             chat.title,
             messageTd.chatId
         )
-        newNotificationMessageChannelImpl.emit(message)
+        CoroutineScope(ioDispatcher).launch {
+            newMessagesChannel.send(message)
+        }
     }
 
     private fun handle(state: TdApi.UpdateNewChat) {

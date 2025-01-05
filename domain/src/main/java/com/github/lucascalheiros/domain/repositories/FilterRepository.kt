@@ -1,6 +1,7 @@
 package com.github.lucascalheiros.domain.repositories
 
 import com.github.lucascalheiros.domain.model.Filter
+import kotlinx.coroutines.flow.Flow
 
 interface FilterRepository {
     suspend fun getFilters(): List<Filter>
@@ -9,4 +10,5 @@ interface FilterRepository {
     suspend fun deleteFilter(id: Long)
     suspend fun incrementNewMessage(id: Long)
     suspend fun resetNewMessages(id: Long)
+    fun onFilterListChanged(): Flow<Long>
 }

@@ -7,6 +7,7 @@ import com.github.lucascalheiros.common.log.logError
 import com.github.lucascalheiros.domain.usecases.DeleteFilterUseCase
 import com.github.lucascalheiros.domain.usecases.GetFilterUseCase
 import com.github.lucascalheiros.domain.usecases.LogoutUseCase
+import com.github.lucascalheiros.telegramfilterapp.notification.channels.ChannelSyncHelper
 import com.github.lucascalheiros.telegramfilterapp.ui.filterlist.reducer.FilterListAction
 import com.github.lucascalheiros.telegramfilterapp.ui.filterlist.reducer.FilterListReducer
 import com.github.lucascalheiros.telegramfilterapp.ui.filterlist.reducer.FilterLoadAction
@@ -27,7 +28,8 @@ class FilterListViewModel @Inject constructor(
     private val reducer: FilterListReducer,
     private val deleteFilterUseCase: DeleteFilterUseCase,
     private val logoutUseCase: LogoutUseCase,
-    private val analyticsReporter: AnalyticsReporter
+    private val analyticsReporter: AnalyticsReporter,
+    private val channelSyncHelper: ChannelSyncHelper
 ): ViewModel() {
 
     private val _state = MutableStateFlow(FilterListUiState())
@@ -67,7 +69,9 @@ class FilterListViewModel @Inject constructor(
     private suspend fun loadData() {
         return try {
             reduceAction(FilterLoadAction.SetLoad(true))
-            val filters = getFilterUseCase.getFilters()
+            val filters = getFilterUseCase.getFilters().also {
+                channelSyncHelper.syncChannels(it)
+            }
             reduceAction(FilterLoadAction.Success(filters))
         } catch (e: Exception) {
             logError("::handleLoadData", e)

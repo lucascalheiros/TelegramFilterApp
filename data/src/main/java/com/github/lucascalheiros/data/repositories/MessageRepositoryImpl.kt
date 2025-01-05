@@ -9,6 +9,8 @@ import com.github.lucascalheiros.domain.repositories.MessageRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.receiveAsFlow
 import org.drinkless.tdlib.TdApi
 import javax.inject.Inject
 
@@ -21,6 +23,10 @@ class MessageRepositoryImpl @Inject constructor(
             FilterStrategy.LocalRegexSearch -> searchMessagesWithRegex(filter)
             FilterStrategy.TelegramQuerySearch -> searchMessagesWithQuery(filter)
         }
+    }
+
+    override fun onNewMessages(): Flow<Message> {
+        return telegramClientWrapper.newMessagesChannel.receiveAsFlow()
     }
 
     private suspend fun searchMessagesWithRegex(
