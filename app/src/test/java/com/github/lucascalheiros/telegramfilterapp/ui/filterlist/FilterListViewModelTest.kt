@@ -1,7 +1,6 @@
 package com.github.lucascalheiros.telegramfilterapp.ui.filterlist
 
 import com.github.lucascalheiros.MainDispatcherRule
-import com.github.lucascalheiros.analytics.reporter.AnalyticsReporter
 import com.github.lucascalheiros.domain.usecases.DeleteFilterUseCase
 import com.github.lucascalheiros.domain.usecases.GetFilterUseCase
 import com.github.lucascalheiros.domain.usecases.LogoutUseCase

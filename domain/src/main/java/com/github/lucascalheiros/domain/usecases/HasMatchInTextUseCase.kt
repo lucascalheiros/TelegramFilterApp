@@ -1,6 +1,5 @@
 package com.github.lucascalheiros.domain.usecases
 
-import com.github.lucascalheiros.domain.model.Filter
 import com.github.lucascalheiros.domain.model.FilterStrategy
 import com.github.lucascalheiros.domain.repositories.SearchTextRepository
 import javax.inject.Inject
