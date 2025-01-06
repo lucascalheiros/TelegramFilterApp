@@ -7,6 +7,7 @@ import com.github.lucascalheiros.data.local.AppDatabase
 import com.github.lucascalheiros.data.repositories.datasources.FilterLocalDataSource
 import com.github.lucascalheiros.domain.model.Filter
 import com.github.lucascalheiros.domain.model.FilterType
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -40,7 +41,7 @@ class FilterRepositoryImplTest {
 
     @Test
     fun `test empty data returns`() = runTest {
-        val filters = filterRepositoryImpl.getFilters()
+        val filters = filterRepositoryImpl.getFilters().first()
         assertEquals(listOf<Filter>(), filters)
     }
 
