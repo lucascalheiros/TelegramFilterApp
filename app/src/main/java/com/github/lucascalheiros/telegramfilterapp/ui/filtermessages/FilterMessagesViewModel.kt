@@ -66,7 +66,7 @@ class FilterMessagesViewModel @Inject constructor(
         try {
             markFilterMessagesAsReadUseCase(filterId)
             reduceAction(FilterMessagesAction.LoadingMessage)
-            val filter = getFilterUseCase.getFilter(filterId) ?: return
+            val filter = getFilterUseCase(filterId) ?: return
             reduceAction(FilterMessagesAction.SetFilter(filter))
             val messages = getMessagesUseCase(filter)
             reduceAction(FilterMessagesAction.SetMessages(messages))

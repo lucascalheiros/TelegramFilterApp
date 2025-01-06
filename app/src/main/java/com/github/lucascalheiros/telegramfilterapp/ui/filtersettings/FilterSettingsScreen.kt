@@ -8,6 +8,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.lucascalheiros.common.log.logError
 import com.github.lucascalheiros.telegramfilterapp.R
+import com.github.lucascalheiros.telegramfilterapp.ui.components.ComposeAndStartedScope
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.components.FilterScreenContent
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.Flow
@@ -20,6 +21,11 @@ fun FilterSettingsScreen(
     onBackPressed: () -> Unit = {}
 ) {
     val state = viewModel.state.collectAsState()
+    ComposeAndStartedScope {
+        launch {
+            viewModel.collectWithLifecycleScope()
+        }
+    }
     LaunchedEffect(Unit) {
         viewModel.dispatch(FilterSettingsIntent.LoadData)
     }

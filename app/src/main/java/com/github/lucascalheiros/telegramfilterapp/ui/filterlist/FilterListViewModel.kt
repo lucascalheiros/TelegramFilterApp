@@ -15,10 +15,13 @@ import com.github.lucascalheiros.telegramfilterapp.ui.filterlist.reducer.FilterL
 import com.github.lucascalheiros.telegramfilterapp.ui.filterlist.reducer.LogoutAction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -31,7 +34,7 @@ class FilterListViewModel @Inject constructor(
     private val logoutUseCase: LogoutUseCase,
     private val analyticsReporter: AnalyticsReporter,
     private val channelSyncHelper: ChannelSyncHelper
-): ViewModel() {
+) : ViewModel() {
 
     private val _state = MutableStateFlow(FilterListUiState())
     val state = _state.asStateFlow()
@@ -47,11 +50,25 @@ class FilterListViewModel @Inject constructor(
         }
     }
 
+    suspend fun collectWithLifecycleScope() = coroutineScope {
+        launch {
+            getFilterUseCase()
+                .catch {
+                    logError("::handleLoadData", it)
+                    analyticsReporter.addNonFatalReport(it)
+                    reduceAction(FilterLoadAction.SetLoad(false))
+                    sendEvent(FilterListUiEvent.DataLoadingFailure)
+                }
+                .collectLatest {
+                    channelSyncHelper.syncChannels(it)
+                    reduceAction(FilterLoadAction.Success(it))
+                }
+        }
+    }
+
     private suspend fun intentHandleMiddleware(intent: FilterListIntent) {
         logDebug("::intentHandleMiddleware $intent")
         when (intent) {
-            FilterListIntent.LoadData -> loadData()
-
             is FilterListIntent.DeleteFilter -> delete(intent.filterId, intent.filterName)
 
             FilterListIntent.Logout -> logout()
@@ -68,21 +85,6 @@ class FilterListViewModel @Inject constructor(
         _event.emit(event)
     }
 
-    private suspend fun loadData() {
-        return try {
-            reduceAction(FilterLoadAction.SetLoad(true))
-            val filters = getFilterUseCase.getFilters().also {
-                channelSyncHelper.syncChannels(it)
-            }
-            reduceAction(FilterLoadAction.Success(filters))
-        } catch (e: Exception) {
-            logError("::handleLoadData", e)
-            analyticsReporter.addNonFatalReport(e)
-            reduceAction(FilterLoadAction.SetLoad(false))
-            sendEvent(FilterListUiEvent.DataLoadingFailure)
-        }
-    }
-
     private suspend fun delete(filterId: Long, filterName: String) {
         val event = try {
             deleteFilterUseCase(filterId)
@@ -91,7 +93,6 @@ class FilterListViewModel @Inject constructor(
             FilterListUiEvent.DeleteFilter.Failure(filterName)
         }
         sendEvent(event)
-        loadData()
     }
 
     private suspend fun logout() {

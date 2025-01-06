@@ -4,14 +4,16 @@ import com.github.lucascalheiros.data.local.dao.FilterDao
 import com.github.lucascalheiros.data.mappers.toModel
 import com.github.lucascalheiros.data.model.FilterDb
 import com.github.lucascalheiros.domain.model.Filter
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class FilterLocalDataSource @Inject constructor(
     private val dao: FilterDao
 ) {
 
-    suspend fun getFilters(): List<Filter> = dao.getFilterWithQueriesAndChats().map {
-        it.toModel()
+    fun getFilters(): Flow<List<Filter>> = dao.getFilterWithQueriesAndChats().map { list ->
+        list.map { it.toModel() }
     }
 
     suspend fun getFilter(id: Long): Filter? = dao.getFilterWithQueriesAndChats(id)?.toModel()

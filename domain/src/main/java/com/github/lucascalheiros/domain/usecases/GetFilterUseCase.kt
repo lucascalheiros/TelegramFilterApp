@@ -2,14 +2,15 @@ package com.github.lucascalheiros.domain.usecases
 
 import com.github.lucascalheiros.domain.model.Filter
 import com.github.lucascalheiros.domain.repositories.FilterRepository
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GetFilterUseCase @Inject constructor(
     private val filterRepository: FilterRepository
 ) {
 
-    suspend fun getFilters(): List<Filter> = filterRepository.getFilters()
+    operator fun invoke(): Flow<List<Filter>> = filterRepository.getFilters()
 
-    suspend fun getFilter(id: Long): Filter? = filterRepository.getFilter(id)
+    suspend operator fun invoke(id: Long): Filter? = filterRepository.getFilter(id)
 
 }

@@ -9,13 +9,14 @@ import com.github.lucascalheiros.data.model.ChatToFilterInfoCrossRefDb
 import com.github.lucascalheiros.data.model.FilterDb
 import com.github.lucascalheiros.data.model.FilterToQueriesCrossRefDb
 import com.github.lucascalheiros.data.model.FilterWithQueriesAndChats
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FilterDao {
 
     @Query("select * from FilterDb")
     @Transaction
-    suspend fun getFilterWithQueriesAndChats(): List<FilterWithQueriesAndChats>
+    fun getFilterWithQueriesAndChats(): Flow<List<FilterWithQueriesAndChats>>
 
     @Query("select * from FilterDb where id = :id")
     @Transaction

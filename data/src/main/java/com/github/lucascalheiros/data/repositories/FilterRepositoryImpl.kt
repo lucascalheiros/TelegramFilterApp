@@ -4,9 +4,7 @@ import com.github.lucascalheiros.data.mappers.toDb
 import com.github.lucascalheiros.data.repositories.datasources.FilterLocalDataSource
 import com.github.lucascalheiros.domain.model.Filter
 import com.github.lucascalheiros.domain.repositories.FilterRepository
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 
 
@@ -14,9 +12,7 @@ class FilterRepositoryImpl @Inject constructor(
     private val filterLocalDataSource: FilterLocalDataSource,
 ): FilterRepository {
 
-    private val filterDataChangeChannel = Channel<Long>(Channel.CONFLATED)
-
-    override suspend fun getFilters(): List<Filter> {
+    override fun getFilters(): Flow<List<Filter>> {
         return filterLocalDataSource.getFilters()
     }
 
@@ -29,14 +25,11 @@ class FilterRepositoryImpl @Inject constructor(
             filterDb = filter.toDb(),
             chatIds = filter.chatIds,
             queries = filter.queries
-        ).also {
-            filterDataChangeChannel.send(it)
-        }
+        )
     }
 
     override suspend fun deleteFilter(id: Long) {
         filterLocalDataSource.deleteFilter(id)
-        filterDataChangeChannel.send(id)
     }
 
     override suspend fun incrementNewMessage(id: Long) {
@@ -45,10 +38,6 @@ class FilterRepositoryImpl @Inject constructor(
 
     override suspend fun resetNewMessages(id: Long) {
         filterLocalDataSource.resetNewMessages(id)
-    }
-
-    override fun onFilterListChanged(): Flow<Long> {
-        return filterDataChangeChannel.receiveAsFlow()
     }
 
 }

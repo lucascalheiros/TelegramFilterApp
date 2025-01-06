@@ -16,9 +16,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.github.lucascalheiros.telegramfilterapp.R
 import com.github.lucascalheiros.common.log.logError
+import com.github.lucascalheiros.telegramfilterapp.R
 import com.github.lucascalheiros.telegramfilterapp.navigation.NavRoute
+import com.github.lucascalheiros.telegramfilterapp.ui.components.ComposeAndStartedScope
 import com.github.lucascalheiros.telegramfilterapp.ui.filterlist.components.FilterListScreenContent
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.Flow
@@ -33,8 +34,10 @@ fun FilterListScreen(
 ) {
     val state by viewModel.state.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
-    LaunchedEffect(Unit) {
-        viewModel.dispatch(FilterListIntent.LoadData)
+    ComposeAndStartedScope {
+        launch {
+            viewModel.collectWithLifecycleScope()
+        }
     }
     HandlePostNotificationPermissionRequest()
     HandleUiEvent(viewModel.event, snackbarHostState)

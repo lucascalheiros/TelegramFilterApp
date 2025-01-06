@@ -17,8 +17,7 @@ import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.Fil
 import com.github.lucascalheiros.telegramfilterapp.ui.filtersettings.reducer.FilterSettingsReducer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -50,7 +49,13 @@ class FilterSettingsViewModel @Inject constructor(
     private val _events = MutableSharedFlow<FilterSettingsUiEvent>()
     val events = _events.asSharedFlow()
 
-    private var watchChatsJob: Job? = null
+    suspend fun collectWithLifecycleScope() = coroutineScope {
+        launch {
+            getChatsUseCase().collectLatest {
+                reduceAction(FilterSettingsAction.UpdateAvailableChats(it))
+            }
+        }
+    }
 
     fun dispatch(intent: FilterSettingsIntent) {
         viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
@@ -110,7 +115,7 @@ class FilterSettingsViewModel @Inject constructor(
 
     private suspend fun loadFilter(): Filter? {
         val filterId = filterSettingsParam.filterId ?: return null
-        return getFilterUseCase.getFilter(filterId)
+        return getFilterUseCase.invoke(filterId)
     }
 
     private suspend fun save() {
@@ -134,15 +139,9 @@ class FilterSettingsViewModel @Inject constructor(
         }
     }
 
-    private fun CoroutineScope.watchChatUpdate() = launch {
-        getChatsUseCase().collectLatest {
-            reduceAction(FilterSettingsAction.UpdateAvailableChats(it))
-        }
-    }
-
     private suspend fun loadData() {
+        loadChats()
         return try {
-            watchAndLoadChats()
             val filter = loadFilter() ?: return
             reduceAction(FilterSettingsAction.SetFilter(filter))
         } catch (e: Exception) {
@@ -151,10 +150,7 @@ class FilterSettingsViewModel @Inject constructor(
         }
     }
 
-    private fun watchAndLoadChats() = viewModelScope.launch {
-        if (watchChatsJob?.isActive != true) {
-            watchChatsJob = viewModelScope.watchChatUpdate()
-        }
+    private fun loadChats() = viewModelScope.launch {
         try {
             getChatsUseCase.update()
         } catch (_: Exception) {

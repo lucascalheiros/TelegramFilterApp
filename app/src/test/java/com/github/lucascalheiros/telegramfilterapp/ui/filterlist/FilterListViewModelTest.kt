@@ -1,24 +1,23 @@
 package com.github.lucascalheiros.telegramfilterapp.ui.filterlist
 
 import com.github.lucascalheiros.MainDispatcherRule
+import com.github.lucascalheiros.domain.model.Filter
 import com.github.lucascalheiros.domain.usecases.DeleteFilterUseCase
 import com.github.lucascalheiros.domain.usecases.GetFilterUseCase
 import com.github.lucascalheiros.domain.usecases.LogoutUseCase
 import com.github.lucascalheiros.telegramfilterapp.mocks.FilterMocks
 import com.github.lucascalheiros.telegramfilterapp.ui.filterlist.reducer.FilterListReducer
 import io.mockk.MockKAnnotations
-import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -55,73 +54,28 @@ class FilterListViewModelTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `on LoadData intent validate Filter states`() = runTest {
-        // Keep control to advance execution to prevent loss of conflated states from stateflow
-        Dispatchers.setMain(StandardTestDispatcher())
-
-        val states = mutableListOf<FilterListUiState>()
-
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.state.toList(states)
-        }
-
-        val firstFilterList = listOf(FilterMocks.defaultFilter(), FilterMocks.filterWithEmptyQueries())
-
-        coEvery { getFilterUseCase.getFilters() } returns firstFilterList
-
-        viewModel.dispatch(FilterListIntent.LoadData)
-
-        advanceUntilIdle()
-
-        assertEquals(3, states.size)
-
-        val initialFilterState = states.removeAt(0).filterState
-
-        assertEquals(FilterState.Idle, initialFilterState)
-
-        val loadingFilterState = states.removeAt(0).filterState
-
-        assertEquals(FilterState.Loading(listOf()), loadingFilterState)
-
-        val successFilterState = states.removeAt(0).filterState
-
-        assertEquals(FilterState.Loaded(firstFilterList), successFilterState)
-
-        val secondFilterList = listOf(FilterMocks.defaultFilter())
-
-        coEvery { getFilterUseCase.getFilters() } returns secondFilterList
-
-        viewModel.dispatch(FilterListIntent.LoadData)
-
-        advanceUntilIdle()
-
-        val secondLoadingFilterState = states.removeAt(0).filterState
-
-        assertEquals(FilterState.Loading(firstFilterList), secondLoadingFilterState)
-
-        val secondSuccessFilterState = states.removeAt(0).filterState
-
-        assertEquals(FilterState.Loaded(secondFilterList), secondSuccessFilterState)
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
-    fun `on LoadData intent error FailureState will keep filter data`() = runTest {
+    fun `on LoadData intent error FailureState will keep filter data`() = runTest(
+        UnconfinedTestDispatcher()
+    ) {
         val events = mutableListOf<FilterListUiEvent>()
 
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.event.toList(events)
+            viewModel.event.collect {
+                events.add(it)
+            }
         }
 
-        val firstFilterList = listOf(FilterMocks.defaultFilter(), FilterMocks.filterWithEmptyQueries())
+        val firstFilterList =
+            listOf(FilterMocks.defaultFilter(), FilterMocks.filterWithEmptyQueries())
 
-        coEvery { getFilterUseCase.getFilters() } returns firstFilterList
+        every { getFilterUseCase.invoke() } returns flow {
+            emit(firstFilterList)
+            throw Exception()
+        }
 
-        viewModel.dispatch(FilterListIntent.LoadData)
-
-        coEvery { getFilterUseCase.getFilters() } throws Exception()
-
-        viewModel.dispatch(FilterListIntent.LoadData)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.collectWithLifecycleScope()
+        }
 
         val filterState = viewModel.state.value.filterState
 
@@ -131,4 +85,33 @@ class FilterListViewModelTest {
 
         assertEquals(FilterListUiEvent.DataLoadingFailure, events.removeAt(0))
     }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `on LoadData intent validate Filter states`() = runTest {
+        val firstFilterList =
+            listOf(FilterMocks.defaultFilter(), FilterMocks.filterWithEmptyQueries())
+
+        val filtersStateFlow = MutableStateFlow<List<Filter>?>(null)
+
+        every { getFilterUseCase.invoke() } returns filtersStateFlow.filterNotNull()
+
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.collectWithLifecycleScope()
+        }
+
+        assertEquals(FilterState.Idle, viewModel.state.value.filterState)
+
+        filtersStateFlow.value = firstFilterList
+
+        assertEquals(FilterState.Loaded(firstFilterList), viewModel.state.value.filterState)
+
+        val secondFilterList = listOf(FilterMocks.defaultFilter())
+
+        filtersStateFlow.value = secondFilterList
+
+        assertEquals(FilterState.Loaded(secondFilterList), viewModel.state.value.filterState)
+    }
+
+
 }

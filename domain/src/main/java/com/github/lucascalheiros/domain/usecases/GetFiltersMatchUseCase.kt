@@ -4,6 +4,7 @@ import com.github.lucascalheiros.common.di.DefaultDispatcher
 import com.github.lucascalheiros.domain.model.Filter
 import com.github.lucascalheiros.domain.model.Message
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -21,7 +22,7 @@ class GetFiltersMatchUseCase @Inject constructor(
         textToFilter: String,
         chatId: Long
     ): List<Filter> = withContext(defaultDispatcher) {
-        getFilterUseCase.getFilters().filter {
+        getFilterUseCase.invoke().first().filter {
             val isFromMonitoredChat = (chatId in it.chatIds)
             if (!isFromMonitoredChat) {
                 return@filter false
