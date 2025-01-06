@@ -64,19 +64,20 @@ interface FilterDao {
         clearChatIds(id)
     }
 
+    @Query("UPDATE FilterDb SET newMessagesCount = :newMessagesCount WHERE id = :id")
+    suspend fun setNewMessageCount(id: Long, newMessagesCount: Int)
+
     @Transaction
     suspend fun incrementNewMessageCounter(id: Long) {
         getFilter(id)?.also {
-            val incrementedFilter = it.copy(newMessagesCount = it.newMessagesCount + 1)
-            save(incrementedFilter)
+            setNewMessageCount(id, it.newMessagesCount + 1)
         }
     }
 
     @Transaction
     suspend fun resetNewMessageCounter(id: Long) {
         getFilter(id)?.also {
-            val incrementedFilter = it.copy(newMessagesCount = 0)
-            save(incrementedFilter)
+            setNewMessageCount(id, 0)
         }
     }
 }
