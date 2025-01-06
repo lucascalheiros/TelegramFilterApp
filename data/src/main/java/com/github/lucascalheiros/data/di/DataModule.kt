@@ -21,12 +21,14 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object DataModule {
 
     @Provides
+    @Singleton
     fun provideAppDataBase(@ApplicationContext context: Context): AppDatabase {
         return Room.databaseBuilder(
             context,
@@ -38,6 +40,7 @@ object DataModule {
     }
 
     @Provides
+    @Singleton
     fun provideFilterDao(db: AppDatabase): FilterDao {
         return db.filterDao()
     }
@@ -47,6 +50,7 @@ object DataModule {
 @InstallIn(SingletonComponent::class)
 interface FilterRepositoryBinding {
     @Binds
+    @Singleton
     fun bindFilterRepository(impl: FilterRepositoryImpl): FilterRepository
 }
 
@@ -54,6 +58,7 @@ interface FilterRepositoryBinding {
 @InstallIn(SingletonComponent::class)
 interface MessageRepositoryBinding {
     @Binds
+    @Singleton
     fun bindMessageRepository(impl: MessageRepositoryImpl): MessageRepository
 }
 
@@ -61,6 +66,7 @@ interface MessageRepositoryBinding {
 @InstallIn(SingletonComponent::class)
 interface TelegramSetupRepositoryBinding {
     @Binds
+    @Singleton
     fun bindTelegramSetupRepository(impl: TelegramSetupRepositoryImpl): TelegramSetupRepository
 }
 
@@ -68,6 +74,7 @@ interface TelegramSetupRepositoryBinding {
 @InstallIn(SingletonComponent::class)
 interface ChatRepositoryBinding {
     @Binds
+    @Singleton
     fun bindChatRepository(impl: ChatRepositoryImpl): ChatRepository
 }
 
@@ -75,5 +82,6 @@ interface ChatRepositoryBinding {
 @InstallIn(SingletonComponent::class)
 interface SearchTextRepositoryBinding {
     @Binds
+    @Singleton
     fun bind(impl: SearchTextRepositoryImpl): SearchTextRepository
 }
