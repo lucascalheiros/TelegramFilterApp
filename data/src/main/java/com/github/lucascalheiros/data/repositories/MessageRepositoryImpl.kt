@@ -35,7 +35,9 @@ class MessageRepositoryImpl @Inject constructor(
 
     private suspend fun getMessagesFromMonitoredChats(filter: Filter): List<TdApi.Message> = coroutineScope{
         logDebug("getMessagesFromMonitoredChats chats: ${filter.chatIds.size}")
-        filter.chatIds.map {
+        filter.chatIds.filter {
+            telegramClientWrapper.getChat(it) != null // include only chats that are verified to exist
+        }.map {
             async { getMessagesFromChat(chatId = it, (filter.limitDate / 1000L).toInt()) }
         }.awaitAll().flatten().distinctBy { it.id }
     }
