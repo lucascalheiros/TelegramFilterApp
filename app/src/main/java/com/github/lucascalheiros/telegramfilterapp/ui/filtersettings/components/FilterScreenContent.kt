@@ -94,7 +94,7 @@ fun FilterScreenContent(
                 Column {
                     SettingItem(stringResource(R.string.selected_sources)) {
                         Text(
-                            state.selectedChatIds.size.toString(),
+                            state.selectedChats.size.toString(),
                             color = MaterialTheme.colorScheme.primary
                         )
                     }
