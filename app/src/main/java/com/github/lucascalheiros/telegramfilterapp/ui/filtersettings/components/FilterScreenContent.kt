@@ -70,23 +70,31 @@ fun FilterScreenContent(
                 }
                 HorizontalDivider()
                 AnimatedVisibility(state.hasQueriesOnFilterType) {
-                    QueriesOption(
-                        state.queries,
-                        { dispatch(FilterSettingsIntent.RemoveQuery(it)) },
-                        { dispatch(FilterSettingsIntent.AddQuery(it)) }
-                    )
+                    Column {
+                        QueriesOption(
+                            state.queries,
+                            { dispatch(FilterSettingsIntent.RemoveQuery(it)) },
+                            { dispatch(FilterSettingsIntent.AddQuery(it)) }
+                        )
+                        HorizontalDivider()
+                    }
                 }
                 AnimatedVisibility(state.hasRegexOnFilterType) {
-                    RegexOption(state.regex) {
-                        dispatch(FilterSettingsIntent.UpdateRegex(it))
+                    Column {
+                        RegexOption(state.regex) {
+                            dispatch(FilterSettingsIntent.UpdateRegex(it))
+                        }
+                        HorizontalDivider()
                     }
                 }
                 AnimatedVisibility(state.hasFuzzyDistanceOnFilterType) {
-                    FuzzyDistanceOption(state.fuzzyDistance) {
-                        dispatch(FilterSettingsIntent.UpdateFuzzyDistance(it))
+                    Column {
+                        FuzzyDistanceOption(state.fuzzyDistance) {
+                            dispatch(FilterSettingsIntent.UpdateFuzzyDistance(it))
+                        }
+                        HorizontalDivider()
                     }
                 }
-                HorizontalDivider()
                 FilterDateTimeOption(state.filterDateTime) {
                     dispatch(FilterSettingsIntent.SetFilterDateTime(it))
                 }
