@@ -44,6 +44,15 @@ interface FilterDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun save(data: FilterDb): Long
 
+    @Query("delete from FilterDb")
+    suspend fun deleteAllFilters()
+
+    @Query("delete from ChatToFilterInfoCrossRefDb")
+    suspend fun deleteAllChatIds()
+
+    @Query("delete from FilterToQueriesCrossRefDb")
+    suspend fun deleteAllQueries()
+
     @Transaction
     suspend fun save(
         filterDb: FilterDb,
@@ -63,6 +72,13 @@ interface FilterDao {
         clearFilter(id)
         clearQueries(id)
         clearChatIds(id)
+    }
+
+    @Transaction
+    suspend fun deleteAll() {
+        deleteAllFilters()
+        deleteAllChatIds()
+        deleteAllQueries()
     }
 
     @Query("UPDATE FilterDb SET newMessagesCount = :newMessagesCount WHERE id = :id")

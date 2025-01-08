@@ -32,6 +32,10 @@ class FilterRepositoryImpl @Inject constructor(
         filterLocalDataSource.deleteFilter(id)
     }
 
+    override suspend fun deleteAll() {
+        filterLocalDataSource.deleteAll()
+    }
+
     override suspend fun incrementNewMessage(id: Long) {
         filterLocalDataSource.incrementNewMessage(id)
     }

@@ -28,6 +28,10 @@ class FilterLocalDataSource @Inject constructor(
         dao.deleteFilter(id)
     }
 
+    suspend fun deleteAll() {
+        dao.deleteAll()
+    }
+
     suspend fun incrementNewMessage(id: Long) {
         dao.incrementNewMessageCounter(id)
     }

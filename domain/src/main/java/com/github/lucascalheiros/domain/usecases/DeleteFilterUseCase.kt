@@ -10,4 +10,8 @@ class DeleteFilterUseCase @Inject constructor(
     suspend operator fun invoke(filterId: Long) {
         filterRepository.deleteFilter(filterId)
     }
+
+    suspend operator fun invoke() {
+        filterRepository.deleteAll()
+    }
 }
