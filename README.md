@@ -92,7 +92,7 @@ This is a domain driven architecture, so both `app` an `data` modules will depen
 As Additional minor modules:
 * **analytics**: Following best practices to share analytics and crashlytics capabilities to other modules
 * **common**: Some utilitary functions, logs and dispatcher qualifiers
-* **fuzzysearch**: Implementation of [Levenshtein distance](https://www.geeksforgeeks.org/introduction-to-levenshtein-distance/) in c++ algorithm
+* **fuzzysearch**: Implementation of [Levenshtein distance](https://www.geeksforgeeks.org/introduction-to-levenshtein-distance/) algorithm in c++
 
 
 
