@@ -1,6 +1,7 @@
 package com.github.lucascalheiros.data.repositories
 
 import com.github.lucascalheiros.common.log.logDebug
+import com.github.lucascalheiros.common.log.logError
 import com.github.lucascalheiros.data.frameworks.searchtext.SearchTextEngine
 import com.github.lucascalheiros.data.frameworks.telegram.TelegramClientWrapper
 import com.github.lucascalheiros.data.frameworks.telegram.textContent
@@ -35,11 +36,16 @@ class MessageRepositoryImpl @Inject constructor(
 
     private suspend fun getMessagesFromMonitoredChats(filter: Filter): List<TdApi.Message> = coroutineScope{
         logDebug("getMessagesFromMonitoredChats chats: ${filter.chatIds.size}")
-        filter.chatIds.filter {
-            telegramClientWrapper.getChat(it) != null // include only chats that are verified to exist
-        }.map {
-            async { getMessagesFromChat(chatId = it, (filter.limitDate / 1000L).toInt()) }
-        }.awaitAll().flatten().distinctBy { it.id }
+        filter.chatIds.map {
+            async {
+                try {
+                    getMessagesFromChat(chatId = it, (filter.limitDate / 1000L).toInt())
+                } catch (e: Exception) {
+                    logError("getMessagesFromMonitoredChats", e)
+                    null
+                }
+            }
+        }.awaitAll().filterNotNull().flatten().distinctBy { it.id }
     }
 
     private suspend fun searchMessagesWithLocalStrategy(
