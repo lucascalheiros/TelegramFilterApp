@@ -15,12 +15,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
-import com.github.lucascalheiros.common.datetime.millisToLocalDate
-import com.github.lucascalheiros.common.datetime.toMillis
 import com.github.lucascalheiros.telegramfilterapp.R
 import com.github.lucascalheiros.telegramfilterapp.ui.components.SettingItem
+import java.time.Instant
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
@@ -30,7 +30,7 @@ fun FilterDateTimeOption(dateTime: LocalDateTime, onUpdateDateTime: (LocalDateTi
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState(
-        dateTime.toMillis()
+        dateTime.toInstant(ZoneOffset.UTC).toEpochMilli()
     )
     val timePickerState = rememberTimePickerState(
         initialHour = dateTime.hour,
@@ -39,7 +39,7 @@ fun FilterDateTimeOption(dateTime: LocalDateTime, onUpdateDateTime: (LocalDateTi
     )
     fun dispatchNewDate()  {
         val dateMillis = datePickerState.selectedDateMillis ?: return
-        val date = dateMillis.millisToLocalDate()
+        val date = Instant.ofEpochMilli(dateMillis).atOffset(ZoneOffset.UTC).toLocalDate()
         val time = LocalTime.of(timePickerState.hour, timePickerState.minute)
         val newLocalDateTime = LocalDateTime.of(date, time)
         onUpdateDateTime(newLocalDateTime)
