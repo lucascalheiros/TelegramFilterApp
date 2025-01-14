@@ -9,6 +9,12 @@ This is a utility app built with [TdLib](https://core.telegram.org/tdlib) to fil
 
 The idea for this app originated from a desire to filter Black Friday deals from Telegram deals channels. Initially, the plan was to create a Filter Bot; however, Telegram bots cannot subscribe to channels or access messages. This limitation led to the development of a filter companion app. While this is a relatively simple app, it is well-constructed and architected as part of my showcase projects. (Check out a different architecture and tech stack in this project: [Showcase-App-WaterReminder](https://github.com/lucascalheiros/Showcase-App-WaterReminder).)
 
+## Features
+
+* Create queries and filters for specific channels and chats
+* Receive custom notifications on messages with specific words
+* Use fuzzy search, regex, or simple search on your filters
+
 ## Build
 
 To build this application properly, you will need the following:
